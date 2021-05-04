@@ -1,1 +1,15 @@
-<youtube-player #player></youtube-player>
+<div fxFill fxLayout="column" fxLayoutAlign="start stretch">
+    <div class="fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
+        <div class="container" fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
+            <app-youtube-video #video></app-youtube-video>
+        </div>
+        <div class="container" fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
+            <app-youtube-video-controls #videoController></app-youtube-video-controls>
+        </div>
+    </div>
+    <div class="fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
+        <div class="container" fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
+            <app-youtube-loop-controls #loopController></app-youtube-loop-controls>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,12 @@ export class YoutubeVideoControlsComponent implements OnInit {
 
   constructor() { }
 
+  playbackSpeed: number = 1.0;
+
   ngOnInit(): void {
   }
 
+  formatLabel(value: number) {
+    return value + "x";
+  }
 }

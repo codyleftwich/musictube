@@ -1,3 +1,10 @@
+.mt-card-half {
+  height: calc(50% - 15px);
+  width: calc(100% - 20px);
+  box-sizing: border-box;
+  margin: 10px 10px 10px 10px;
+}
+
 /* Overrides */
 ::ng-deep .mat-accent .mat-slider-thumb-label-text {
   color: #fff;

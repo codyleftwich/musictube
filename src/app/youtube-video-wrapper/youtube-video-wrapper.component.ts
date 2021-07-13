@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { YoutubeLoopControlsComponent } from './youtube-loop-controls/youtube-loop-controls.component';
-import { YoutubeVideoControlsComponent } from './youtube-video-controls/youtube-video-controls.component';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { VideoSettings } from './youtube-video-wrapper';
 import { YoutubeVideoComponent } from './youtube-video/youtube-video.component';
 
 @Component({
@@ -9,14 +8,25 @@ import { YoutubeVideoComponent } from './youtube-video/youtube-video.component';
   styleUrls: ['./youtube-video-wrapper.component.css']
 })
 export class YoutubeVideoWrapperComponent implements OnInit {
+  @ViewChild("video", { static: true }) private _video: YoutubeVideoComponent;
 
-  @ViewChild('video', { static: true }) private _video: YoutubeVideoComponent;
-  @ViewChild('videoController', { static: true }) private _videoController: YoutubeVideoControlsComponent;
-  @ViewChild('loopController', { static: true }) private _loopController: YoutubeLoopControlsComponent;
+  private readonly _defaultVideoId: string = 'HyHNuVaZJ-k';
+
+  videoSettings: VideoSettings;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.videoSettings = {
+      videoId: this._defaultVideoId,
+      playbackSpeed: 1.0,
+      isPlaying: false
+    }
   }
 
+  onVideoSettingsChanged(videoSettings: VideoSettings) {
+    console.log("OnVideoSettingsChanged: " + JSON.stringify(videoSettings));
+    this.videoSettings = videoSettings;
+    this._video.videoSettings = this.videoSettings;
+  }
 }

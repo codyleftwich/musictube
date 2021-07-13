@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -16,6 +17,7 @@ import { YoutubeVideoWrapperComponent } from './youtube-video-wrapper.component'
 
 const ngModules = [
   FlexLayoutModule,
+  FormsModule,
   MatButtonModule,
   MatCardModule,
   MatDividerModule,

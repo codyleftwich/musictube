@@ -1,0 +1,7 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-button-wrapper>img .mat-button-wrapper>span {
+  vertical-align: middle;
+}

@@ -48,6 +48,15 @@ export class YoutubeLoopControlsComponent {
   }
 
   /**
+   * Determines if the capture time buttons should be enabled.
+   *
+   * @return True if the user can interact with the loop times.
+   */
+  get canCaptureTime(): boolean {
+    return !this._loopSettings.isLooping && this.videoSettings.hasStarted;
+  }
+
+  /**
    * Private backing for loopSettings.
    */
   private _loopSettings: LoopSettings;

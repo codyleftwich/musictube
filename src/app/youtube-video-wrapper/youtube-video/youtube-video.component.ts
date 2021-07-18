@@ -106,6 +106,7 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
           this.videoSettings.isPlaying = true;
           this.videoSettings.hasStarted = true;
 
+          // Exit the loop when the user plays before the loop delay has finished.
           if (this._waitingForLoop) {
             this.loopSettings.isLooping = false;
             this._waitingForLoop = false;
@@ -116,6 +117,12 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
         else if (value.data == YT.PlayerState.PAUSED) {
           this.videoSettings.isPlaying = false;
           this.videoSettings.hasStarted = true;
+
+          // Exit the loop when the user pauses during it.
+          if (this.loopSettings.isLooping && this._youtubePlayer.getCurrentTime() != this.loopSettings.startTime) {
+            this.loopSettings.isLooping = false;
+            this.onLoopSettingsChanged.emit(this.loopSettings);
+          }
         }
         else if (value.data == YT.PlayerState.UNSTARTED) {
           this.videoSettings.hasStarted = false;

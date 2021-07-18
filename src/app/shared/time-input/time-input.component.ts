@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-time-input',
@@ -20,6 +20,22 @@ export class TimeInputComponent {
    * The input element that represents hours.
    */
   @ViewChild("hoursInput", { static: true }) private _hoursInput: ElementRef;
+
+  /**
+   * Private backing for fieldsEnabled
+   */
+  private _fieldsEnabled: boolean = true;
+
+  /**
+   * Determines whether the input fields shoulds be enabled or not.
+   */
+  @Input()
+  get fieldsEnabled(): boolean {
+    return this._fieldsEnabled;
+  }
+  set fieldsEnabled(value: boolean) {
+    this._fieldsEnabled = value;
+  }
 
   /**
    * EventEmitter used the user changes on of the inputs. Emits the time in seconds.

@@ -1,3 +1,25 @@
-<mat-card class="mt-card-layout">
-    <p>Loop Controls</p>
+<mat-card class="mt-card-layout" fxLayout="column" fxLayoutAlign="center stretch">
+    <mat-card-header>Loop Controls</mat-card-header>
+
+    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
+        <p>Start Time</p>
+        <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"></app-time-input>
+        <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
+            [disabled]="!videoSettings.hasStarted">Capture Start</button>
+    </div>
+    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
+        <p>End time</p>
+        <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"></app-time-input>
+        <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
+            [disabled]="!videoSettings.hasStarted">Capture End</button>
+    </div>
+    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
+        <p>Loop length</p>
+        <app-time-input #loopLengthInput (timeInputChangedEvent)="onLoopLengthInputChanged($event)"></app-time-input>
+    </div>
+    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
+        <button mat-raised-button color="primary" (click)="toggleLoop()" [disabled]="!isLoopValid">
+            {{ loopButtonText }}
+        </button>
+    </div>
 </mat-card>

@@ -16,13 +16,13 @@
 
         <form #videoIdForm="ngForm" (ngSubmit)="onChangeVideo(videoIdForm.value)">
             <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="end center">
-                <mat-form-field appearance="fill">
+                <mat-form-field appearance="fill" style="margin-right: 10px;">
                     <mat-label>Video Id</mat-label>
                     <input matInput placeholder="VideoId" [ngModel]="videoSettings.videoId" name="videoId">
                 </mat-form-field>
             </div>
             <div fxFlex="0 1 calc(20% - 20px)" fxLayoutAlign="start center">
-                <button mat-raised-button color="primary" type="submit">Change Video</button>
+                <button mat-raised-button color="primary" type="submit" style="margin-left: 10px;">Change Video</button>
             </div>
         </form>
     </div>

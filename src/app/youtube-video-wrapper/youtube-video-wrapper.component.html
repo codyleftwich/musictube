@@ -1,7 +1,9 @@
 <div fxFill fxLayout="column" fxLayoutAlign="start stretch">
     <div class="mt-fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
-            <app-youtube-video [videoSettings]="videoSettings" class="mt-fill" #video>
+            <app-youtube-video [videoSettings]="videoSettings" [loopSettings]="loopSettings"
+                (onVideoSettingsChanged)="onVideoSettingsChanged($event)"
+                (onLoopSettingsChanged)="onLoopSettingsChanged($event)" class="mt-fill" #video>
             </app-youtube-video>
         </div>
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
@@ -12,7 +14,10 @@
     </div>
     <div class="mt-fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
-            <app-youtube-loop-controls class="mt-fill" #loopController></app-youtube-loop-controls>
+            <app-youtube-loop-controls [videoSettings]="videoSettings" [loopSettings]="loopSettings"
+                (onLoopSettingsChanged)="onLoopSettingsChanged($event)" (captureStartTimeEvent)="onCaptureStartTime()"
+                (captureEndTimeEvent)="onCaptureEndTime()" class="mt-fill" #loopController>
+            </app-youtube-loop-controls>
         </div>
     </div>
 </div>

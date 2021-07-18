@@ -14,6 +14,7 @@ import { YoutubeVideoComponent } from './youtube-video/youtube-video.component';
 import { YoutubeVideoControlsComponent } from './youtube-video-controls/youtube-video-controls.component';
 import { YoutubeLoopControlsComponent } from './youtube-loop-controls/youtube-loop-controls.component';
 import { YoutubeVideoWrapperComponent } from './youtube-video-wrapper.component';
+import { SharedModule } from '../shared/shared.module';
 
 const ngModules = [
   FlexLayoutModule,
@@ -36,6 +37,7 @@ const ngModules = [
   imports: [
     ...ngModules,
     CommonModule,
+    SharedModule,
     YouTubePlayerModule
   ],
   exports: [

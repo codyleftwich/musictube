@@ -1,0 +1,15 @@
+<mat-form-field class="number-input" appearance="fill">
+    <mat-label>hour</mat-label>
+    <input #hoursInput matInput (change)="onInputChange($event.target.value)" maxlength="3" type="number" min="0"
+        max="999" value="0">
+</mat-form-field>
+<mat-form-field class="number-input" appearance="fill">
+    <mat-label>min</mat-label>
+    <input #minutesInput matInput (change)="onInputChange($event.target.value)" maxlength="2" type="number" min="0"
+        max="60" value="0">
+</mat-form-field>
+<mat-form-field class="number-input" appearance="fill">
+    <mat-label>sec</mat-label>
+    <input #secondsInput matInput (change)="onInputChange($event.target.value)" maxlength="2" type="number" min="0"
+        max="60" value="0">
+</mat-form-field>

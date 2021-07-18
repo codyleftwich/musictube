@@ -1,6 +1,7 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSliderModule } from '@angular/material/slider';
 import { NgModule } from '@angular/core';
@@ -15,6 +16,7 @@ import { MetronomeComponent } from './metronome/metronome.component';
 const ngModules = [
   BrowserAnimationsModule,
   FlexLayoutModule,
+  MatInputModule,
   MatSliderModule,
   MatGridListModule,
 ];

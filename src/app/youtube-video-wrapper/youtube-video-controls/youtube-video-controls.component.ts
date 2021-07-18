@@ -32,9 +32,11 @@ export class YoutubeVideoControlsComponent {
    * Event handler for when the user clicks the "Change Video" button.
    */
   onChangeVideo(data: any) {
-    this.videoSettings.videoId = data.videoId;
-    this.videoSettings.playbackSpeed = 1.0; // Reset the playback speed.
-    this.onVideoSettingsChanged.emit(this.videoSettings);
+    if (data.videoId != this.videoSettings.videoId) {
+      this.videoSettings.videoId = data.videoId;
+      this.videoSettings.playbackSpeed = 1.0; // Reset the playback speed.
+      this.onVideoSettingsChanged.emit(this.videoSettings);
+    }
   }
 
   /**

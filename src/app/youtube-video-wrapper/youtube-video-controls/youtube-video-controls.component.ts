@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { VideoSettings } from '../youtube-video-wrapper';
 
+/**
+ * Component used to manage the UI video controls.
+ */
 @Component({
   selector: 'app-youtube-video-controls',
   templateUrl: './youtube-video-controls.component.html',
@@ -48,6 +51,9 @@ export class YoutubeVideoControlsComponent {
     this.onVideoSettingsChanged.emit(this.videoSettings);
   }
 
+  /**
+   * Plays the video.
+   */
   playVideo() {
     if (!this.videoSettings.isPlaying) {
       this.videoSettings.isPlaying = true;
@@ -55,6 +61,9 @@ export class YoutubeVideoControlsComponent {
     }
   }
 
+  /**
+   * Pauses the video.
+   */
   pauseVideo() {
     if (this.videoSettings.isPlaying) {
       this.videoSettings.isPlaying = false;

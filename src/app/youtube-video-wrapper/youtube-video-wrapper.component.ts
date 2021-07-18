@@ -91,12 +91,20 @@ export class YoutubeVideoWrapperComponent implements OnInit {
     this._setLoopSettings(this.loopSettings);
   }
 
+  /**
+   * Sets the video settings across the components that share it.
+   * @param videoSettings The new value for the video settings.
+   */
   private _setVideoSettings(videoSettings: VideoSettings) {
     this.videoSettings = videoSettings;
     this._video.videoSettings = this.videoSettings;
     this._loopControl.videoSettings = this.videoSettings;
   }
 
+  /**
+   * Sets the loop settings across the components that share it.
+   * @param loopSettings The new value for the loop settings.
+   */
   private _setLoopSettings(loopSettings: LoopSettings) {
     this.loopSettings = loopSettings;
     this._video.loopSettings = this.loopSettings;

@@ -3,6 +3,9 @@ import { YouTubePlayer } from '@angular/youtube-player';
 import { interval, Subscription } from 'rxjs';
 import { LoopSettings, VideoSettings } from '../youtube-video-wrapper';
 
+/**
+ * Component responsible for interaction with the YouTube video.
+ */
 @Component({
   templateUrl: './youtube-video.component.html',
   selector: 'app-youtube-video'
@@ -102,6 +105,13 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
         if (value.data == YT.PlayerState.PLAYING) {
           this.videoSettings.isPlaying = true;
           this.videoSettings.hasStarted = true;
+
+          if (this._waitingForLoop) {
+            this.loopSettings.isLooping = false;
+            this._waitingForLoop = false;
+            clearInterval(this._beepInterval);
+            this.onLoopSettingsChanged.emit(this.loopSettings);
+          }
         }
         else if (value.data == YT.PlayerState.PAUSED) {
           this.videoSettings.isPlaying = false;
@@ -166,10 +176,12 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
       this._waitingForLoop = false;
     }, this._loopSettings.loopDelay * 1000);
 
-    this._beepAudio.play();
-    this._beepInterval = setInterval(() => {
+    if (this._loopSettings.loopDelay != 0) {
       this._beepAudio.play();
-    }, 1000);
+      this._beepInterval = setInterval(() => {
+        this._beepAudio.play();
+      }, 1000);
+    }
   }
 
   /**

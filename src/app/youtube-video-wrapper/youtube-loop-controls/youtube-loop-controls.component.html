@@ -2,24 +2,37 @@
     <mat-card-header>Loop Controls</mat-card-header>
 
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
-        <p>Start Time</p>
-        <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"
-            [fieldsEnabled]="canCaptureTime"></app-time-input>
-        <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
-            [disabled]="!videoSettings.hasStarted">Capture
-            Start</button>
+        <mat-divider [inset]="true"></mat-divider>
+    </div>
+
+    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
+        <fieldset class="no-border">
+            <legend>Start Time</legend>
+            <div class="time-input-group">
+                <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"
+                    [fieldsEnabled]="canCaptureTime"></app-time-input>
+                <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
+                    [disabled]="!videoSettings.hasStarted">Capture
+                    Start</button>
+            </div>
+        </fieldset>
+        <fieldset class="no-border">
+            <legend>End Time</legend>
+            <div class="time-input-group">
+                <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"
+                    [fieldsEnabled]="canCaptureTime"></app-time-input>
+                <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
+                    [disabled]="!videoSettings.hasStarted">Capture
+                    End</button>
+            </div>
+        </fieldset>
     </div>
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
-        <p>End time</p>
-        <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"
-            [fieldsEnabled]="canCaptureTime"></app-time-input>
-        <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
-            [disabled]="!videoSettings.hasStarted">Capture
-            End</button>
-    </div>
-    <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
-        <p>Loop length</p>
-        <app-time-input #loopLengthInput (timeInputChangedEvent)="onLoopLengthInputChanged($event)"></app-time-input>
+        <fieldset class="no-border">
+            <legend>Loop Length</legend>
+            <app-time-input #loopLengthInput (timeInputChangedEvent)="onLoopLengthInputChanged($event)">
+            </app-time-input>
+        </fieldset>
     </div>
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
         <button mat-raised-button color="primary" (click)="toggleLoop()" [disabled]="!isLoopValid">

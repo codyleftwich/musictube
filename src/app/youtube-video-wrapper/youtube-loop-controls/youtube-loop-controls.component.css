@@ -1,1 +1,12 @@
+.no-border {
+  border: none;
+}
 
+.no-border>legend {
+  margin-left: 10px;
+}
+
+.time-input-group>button {
+  margin-left: 10px;
+  margin-right: 10px;
+}

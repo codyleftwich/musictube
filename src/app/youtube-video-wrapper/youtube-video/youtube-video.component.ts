@@ -44,7 +44,7 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
   /**
    * The sound played when _beepInterval is counting seconds.
    */
-  private readonly _beepAudio: HTMLAudioElement = new Audio("assets/beep.wav");
+  private readonly _beepAudio: HTMLAudioElement = new Audio("assets/audio/beep.wav");
 
   /**
    * Private backing for videoSettings.

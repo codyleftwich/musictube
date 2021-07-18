@@ -5,14 +5,16 @@
         <p>Start Time</p>
         <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"
             [fieldsEnabled]="canCaptureTime"></app-time-input>
-        <button mat-raised-button color="primary" (click)="onCaptureStartTime()" [disabled]="!canCaptureTime">Capture
+        <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
+            [disabled]="!videoSettings.hasStarted">Capture
             Start</button>
     </div>
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
         <p>End time</p>
         <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"
             [fieldsEnabled]="canCaptureTime"></app-time-input>
-        <button mat-raised-button color="primary" (click)="onCaptureEndTime()" [disabled]="!canCaptureTime">Capture
+        <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
+            [disabled]="!videoSettings.hasStarted">Capture
             End</button>
     </div>
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">

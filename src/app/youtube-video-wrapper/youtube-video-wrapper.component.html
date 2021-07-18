@@ -13,10 +13,10 @@
         </div>
     </div>
     <div class="mt-fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
-        <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
+        <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center" style="max-height: 50%;">
             <!-- Help -->
             <mat-card class="mt-card-layout" fxLayout="row" fxLayoutAlign="center center">
-                <p>Help goes here</p>
+                <markdown style="height: 100%; overflow-y: scroll;" [src]="'assets/user_manual.md'"></markdown>
             </mat-card>
         </div>
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">

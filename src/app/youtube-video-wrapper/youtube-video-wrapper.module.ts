@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
+import { MarkdownModule } from 'ngx-markdown'
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -15,6 +16,7 @@ import { YoutubeVideoControlsComponent } from './youtube-video-controls/youtube-
 import { YoutubeLoopControlsComponent } from './youtube-loop-controls/youtube-loop-controls.component';
 import { YoutubeVideoWrapperComponent } from './youtube-video-wrapper.component';
 import { SharedModule } from '../shared/shared.module';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 const ngModules = [
   FlexLayoutModule,
@@ -37,6 +39,8 @@ const ngModules = [
   imports: [
     ...ngModules,
     CommonModule,
+    HttpClientModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
     SharedModule,
     YouTubePlayerModule
   ],

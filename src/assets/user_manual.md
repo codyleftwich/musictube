@@ -33,12 +33,8 @@ Users have the ability to loop the video separated by a length of time.
 - Loop Delay: The length of time between loops.
 
 ### Selecting Start/End times
-Currently there are two options to select start and end times for the loop. Option one is to set the loop time manually
-by using the input boxes provided. The second option is to use the `Capture` buttons to capture the time that the
-YouTube video's playback pointer is currently at.
-
-Please note that the start and end input fields will be disabled while the loop is currently running. However, you can
-tighten up the loop by interacting with the `Capture` buttons while you are looping.
+Once the video has begun playing, the `Capture` buttons will be enabled. At any point in the video, these buttons can
+be pressed and the start and end times will be set for the loop.
 
 ### Loop Delay Settings
 This setting will set the amount of time the app will wait before starting the video again. For example, if you set a

@@ -1,11 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-time-input',
   templateUrl: './time-input.component.html',
   styleUrls: ['./time-input.component.css']
 })
-export class TimeInputComponent {
+export class TimeInputComponent implements OnInit {
   /**
    * The input element that represents seconds.
    */
@@ -38,9 +38,42 @@ export class TimeInputComponent {
   }
 
   /**
+   * Backing data for isReadOnly
+   */
+  private _isReadOnly: boolean = false;
+
+  /**
+   * Flag for if the field should be readonly.
+   */
+  @Input()
+  set isReadOnly(value: boolean) {
+    this._isReadOnly = value;
+  }
+  get isReadOnly(): boolean {
+    return this._isReadOnly;
+  }
+
+  /**
+   * The input type to assign to the inputs
+   */
+  inputType: string;
+
+  /**
    * EventEmitter used the user changes on of the inputs. Emits the time in seconds.
    */
   @Output() timeInputChangedEvent = new EventEmitter<number>();
+
+  /**
+   * Initialization code.
+   */
+  ngOnInit(): void {
+    if (this.isReadOnly) {
+      this.inputType = "text";
+    }
+    else {
+      this.inputType = "number";
+    }
+  }
 
   /**
    * Sets the input values by calculating the hours, minutes, and leftover seconds.

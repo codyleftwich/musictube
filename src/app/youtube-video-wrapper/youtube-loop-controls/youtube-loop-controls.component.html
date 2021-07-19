@@ -10,7 +10,7 @@
             <legend>Start Time</legend>
             <div class="time-input-group">
                 <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"
-                    [fieldsEnabled]="canCaptureTime"></app-time-input>
+                    [fieldsEnabled]="canCaptureTime" [isReadOnly]="true"></app-time-input>
                 <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
                     [disabled]="!videoSettings.hasStarted">Capture
                     Start</button>
@@ -20,7 +20,7 @@
             <legend>End Time</legend>
             <div class="time-input-group">
                 <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"
-                    [fieldsEnabled]="canCaptureTime"></app-time-input>
+                    [fieldsEnabled]="canCaptureTime" [isReadOnly]="true"></app-time-input>
                 <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
                     [disabled]="!videoSettings.hasStarted">Capture
                     End</button>

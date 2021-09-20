@@ -7,6 +7,11 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 })
 export class TimeInputComponent implements OnInit {
   /**
+   * The input element that represents milliseconds.
+   */
+  @ViewChild("millisecondsInput", { static: false }) private _millisecondsInput: ElementRef;
+
+  /**
    * The input element that represents seconds.
    */
   @ViewChild("secondsInput", { static: true }) private _secondInput: ElementRef;
@@ -20,6 +25,22 @@ export class TimeInputComponent implements OnInit {
    * The input element that represents hours.
    */
   @ViewChild("hoursInput", { static: true }) private _hoursInput: ElementRef;
+
+  /**
+  * Private backing for showMilliseconds.
+  */
+  private _showMilliseconds = true;
+
+  /**
+   * Whether or not the milliseconds field should be shown.
+   */
+  @Input()
+  get showMilliseconds(): boolean {
+    return this._showMilliseconds;
+  }
+  set showMilliseconds(showMilliseconds: boolean) {
+    this._showMilliseconds = showMilliseconds;
+  }
 
   /**
    * Private backing for fieldsEnabled
@@ -84,6 +105,9 @@ export class TimeInputComponent implements OnInit {
     this._hoursInput.nativeElement.value = Math.floor(seconds / 3600);
     this._minutesInput.nativeElement.value = Math.floor(seconds / 60 % 60);
     this._secondInput.nativeElement.value = Math.floor(seconds % 60);
+    if (this._showMilliseconds) {
+      this._millisecondsInput.nativeElement.value = Math.floor((seconds % 1) * 1000);
+    }
   }
 
   /**
@@ -95,6 +119,10 @@ export class TimeInputComponent implements OnInit {
     result += Number(this._hoursInput.nativeElement.value) * 3600;
     result += Number(this._minutesInput.nativeElement.value) * 60;
     result += Number(this._secondInput.nativeElement.value);
+
+    if (this._showMilliseconds) {
+      result += Number(this._millisecondsInput.nativeElement.value) / 1000;
+    }
 
     return result;
   }

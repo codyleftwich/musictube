@@ -13,3 +13,8 @@
     <input #secondsInput matInput (change)="onInputChange()" [disabled]="!fieldsEnabled" [readonly]="isReadOnly" min="0"
         max="60" value="0" pattern="[0-9]*" [type]="inputType">
 </mat-form-field>
+<mat-form-field *ngIf="showMilliseconds" class="number-input" appearance="fill">
+    <mat-label>ms</mat-label>
+    <input #millisecondsInput matInput (change)="onInputChange()" [disabled]="!fieldsEnabled" [readonly]="isReadOnly"
+        min="0" max="999" value="0" pattern="[0-9]*" [type]="inputType">
+</mat-form-field>

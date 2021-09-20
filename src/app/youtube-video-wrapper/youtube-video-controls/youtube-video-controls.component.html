@@ -7,13 +7,6 @@
 
     <!-- Video ID/Change video-->
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center space-between" fxLayoutGap="20px">
-        <div fxFlex="0 1 calc(20% - 20px)" fxLayoutAlign="end center">
-            <button mat-raised-button (click)="playVideo()">Start Video</button>
-        </div>
-        <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="start center">
-            <button mat-raised-button color="primary" (click)="pauseVideo()">Pause Video</button>
-        </div>
-
         <form #videoIdForm="ngForm" (ngSubmit)="onChangeVideo(videoIdForm.value)">
             <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="end center">
                 <mat-form-field appearance="fill" style="margin-right: 10px;">

@@ -30,7 +30,8 @@
     <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
         <fieldset class="no-border">
             <legend>Loop Delay</legend>
-            <app-time-input #loopLengthInput (timeInputChangedEvent)="onLoopLengthInputChanged($event)">
+            <app-time-input #loopLengthInput [showMilliseconds]="false"
+                (timeInputChangedEvent)="onLoopLengthInputChanged($event)">
             </app-time-input>
         </fieldset>
     </div>

@@ -166,7 +166,9 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
    * @returns The current timestamp of the video in seconds.
    */
   getCurrentTime(): number {
-    return this._youtubePlayer.getCurrentTime();
+    let time = this._youtubePlayer.getCurrentTime();
+    console.log("Captured time: " + time);
+    return time;
   }
 
   /**

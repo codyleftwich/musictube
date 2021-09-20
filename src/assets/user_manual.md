@@ -4,8 +4,6 @@
 
 ## Video Controls
 The `Video Controls` section gives users a way to interact with the video outside of the actual embedded video.
-- Start Video: Plays the video
-- Pause Video: Pauses the video
 - Video ID: The ID of the video to play
 - Change Video: Loads the YouTube video with the video ID in the Video ID field.
 
@@ -16,9 +14,6 @@ of the video that is currently playing.
 To select a video, grab the video ID from the URL of the video you wish to load. For example, a video with a url
 `https://www.youtube.com/watch?v=hello123` will have a video ID of `hello123`. Once you have the ID pasted into the
 video ID textbox, you can click `Change Video` to load the new video.
-
-### Play/Pause Video
-The buttons labeled `Start Video` and `Pause Video` give a different option for playing and pausing a video.
 
 ### Playback Speed Controller
 The playback speed controller will change the playback speed setting in the YouTube video. For example, setting the

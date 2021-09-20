@@ -52,26 +52,6 @@ export class YoutubeVideoControlsComponent {
   }
 
   /**
-   * Plays the video.
-   */
-  playVideo() {
-    if (!this.videoSettings.isPlaying) {
-      this.videoSettings.isPlaying = true;
-      this.onVideoSettingsChanged.emit(this.videoSettings);
-    }
-  }
-
-  /**
-   * Pauses the video.
-   */
-  pauseVideo() {
-    if (this.videoSettings.isPlaying) {
-      this.videoSettings.isPlaying = false;
-      this.onVideoSettingsChanged.emit(this.videoSettings);
-    }
-  }
-
-  /**
    * Formats the value shown on the slider thumb.
    * @param value The value of the slider.
    * @returns The string representation of the value to be shown on the slider thumb.

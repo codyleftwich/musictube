@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
 import { YoutubeVideoComponent } from './youtube-video/youtube-video.component';
@@ -27,6 +28,7 @@ const ngModules = [
   MatFormFieldModule,
   MatInputModule,
   MatSliderModule,
+  MatTabsModule,
 ];
 
 @NgModule({

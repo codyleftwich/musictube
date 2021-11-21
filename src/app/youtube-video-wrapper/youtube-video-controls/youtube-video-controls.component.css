@@ -23,3 +23,11 @@
 ::ng-deep .mat-slider-vertical {
   height: 100%;
 }
+
+::ng-deep .mat-tab-body-wrapper {
+  height: 100%;
+}
+
+::ng-deep .ng-star-inserted {
+  height: 100%;
+}

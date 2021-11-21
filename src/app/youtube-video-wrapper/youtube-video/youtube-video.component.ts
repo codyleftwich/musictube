@@ -181,12 +181,12 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       clearInterval(this._beepInterval);
+      this._beepAudio.play();
       this._youtubePlayer.playVideo();
       this._waitingForLoop = false;
     }, this._loopSettings.loopDelay * 1000);
 
     if (this._loopSettings.loopDelay != 0) {
-      this._beepAudio.play();
       this._beepInterval = setInterval(() => {
         this._beepAudio.play();
       }, 1000);

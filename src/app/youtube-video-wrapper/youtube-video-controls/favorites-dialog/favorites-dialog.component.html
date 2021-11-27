@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>{{ dialogTitle }}</h2>
+
+<div mat-dialog-content>
+    <form [formGroup]="favoriteForm">
+        <div fxLayout="column" fxLayoutAlign="center stretch">
+            <mat-form-field appearance="fill">
+                <mat-label>Video Title</mat-label>
+                <input matInput placeholder="Video Title" name="videoTitle" formControlName="videoTitle">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Artist</mat-label>
+                <input matInput placeholder="Artist" name="artist" formControlName="artist">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Video Id</mat-label>
+                <input matInput placeholder="Video Title" name="videoId" formControlName="videoId">
+            </mat-form-field>
+        </div>
+    </form>
+</div>
+
+<div mat-dialog-actions>
+    <div *ngIf="data.action == 'add'">
+        <div fxLayout="row" fxLayoutAlign="end center" fxFill>
+            <button mat-raised-button mat-dialog-close>Cancel</button>
+            <button mat-raised-button color="primary" [mat-dialog-close]="onAddFavorite()">Add</button>
+        </div>
+    </div>
+    <div *ngIf="data.action == 'edit'">
+        <div fxLayout="row" fxLayoutAlign="end center" fxFill>
+            <button mat-raised-button color="warn" [mat-dialog-close]="onDeleteFavorite()">Delete</button>
+            <div class="spacer"></div>
+            <button mat-raised-button mat-dialog-close>Cancel</button>
+            <button mat-raised-button color="primary" [mat-dialog-close]="onEditFavorite()">Save</button>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,7 @@
 <mat-card class="mt-card-half" fxLayout="column" fxLayoutAlign="center stretch">
     <mat-tab-group class="mt-fill">
-        <mat-tab label="Video Controls">
-            <!-- Video ID/Change video-->
+        <mat-tab label="Video Selection">
+            <!-- Video Controls Tab -->
             <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center space-between">
                 <form #videoIdForm="ngForm" (ngSubmit)="onChangeVideo(videoIdForm.value)">
                     <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="end center">
@@ -13,8 +13,49 @@
                     <div fxFlex="0 1 calc(20% - 20px)" fxLayoutAlign="start center">
                         <button mat-raised-button color="primary" type="submit" style="margin-left: 10px;">Change
                             Video</button>
+                        <button mat-raised-button type="button" style="margin-left: 10px;" (click)="addFavorite()">Add
+                            Favorite</button>
                     </div>
                 </form>
+            </div>
+        </mat-tab>
+        <!-- Favorites Tab-->
+        <mat-tab label="Favorites">
+            <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center space-between">
+                <!-- Favorites dropdown and control -->
+                <form #videoSelectForm="ngForm" (ngSubmit)="onChangeVideoFavorite()">
+                    <div fxFlex="0 1" fxLayoutAlign="end center">
+                        <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
+                            <mat-label>Video</mat-label>
+                            <mat-select matNativeControl required [(value)]="selectedFavorite">
+                                <mat-option *ngFor="let favorite of favorites" [value]="favorite">
+                                    {{favorite.videoTitle}} - {{favorite.artist}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div fxFlex="0 1" fxLayoutAlign="end center">
+                        <button mat-raised-button color="primary" type="submit" style="margin-left: 10px;">Change
+                            Video</button>
+                        <button mat-raised-button type="button" [disabled]="!selectedFavorite"
+                            style="margin-left: 10px;" (click)="editFavorite()">Edit</button>
+                    </div>
+                </form>
+                <!-- File Selection, Add, Load/Save -->
+                <div fxFlex="0 1" fxLayoutAlign="end center">
+                    <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
+                        <mat-label>Favorites File</mat-label>
+                        <input matInput type="text" [(ngModel)]="saveFileName">
+                        <button matSuffix mat-icon-button (click)="saveFileInput.click()">
+                            <mat-icon>file_open</mat-icon>
+                        </button>
+                        <input hidden type="file" accept=".json" #saveFileInput (change)="loadSaveFile($event)" />
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" type="button" style="margin-left: 10px;"
+                        (click)="addFavorite()">Add</button>
+                    <button mat-raised-button type="button" style="margin-left: 10px;" (click)="downloadFile()"
+                        [disabled]="!isSaveEnabled()">Save</button>
+                </div>
             </div>
         </mat-tab>
     </mat-tab-group>
@@ -22,8 +63,8 @@
 
 <mat-card class="mt-card-half" fxLayout="column" fxLayoutAlign="center stretch">
     <mat-tab-group class="mt-fill">
+        <!-- Playback Speed Tab -->
         <mat-tab label="Playback Speed" class="mt-fill">
-            <!-- Playback speed -->
             <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
                 <div fxFlex="0 1 calc(70% - 20px)" fxLayoutAlign="center center">
                     <mat-slider [disabled]="!videoSettings.hasStarted" thumbLabel [displayWith]="formatLabel"

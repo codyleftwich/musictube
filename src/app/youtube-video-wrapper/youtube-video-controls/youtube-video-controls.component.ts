@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Favorite, VideoSettings } from '../youtube-video-wrapper';
+import { Favorite } from 'src/app/shared/favorite';
+import { FavoritesService } from 'src/app/shared/favorites.service';
+import { VideoSettings } from '../youtube-video-wrapper';
 import { FavoritesDialogComponent } from './favorites-dialog/favorites-dialog.component';
 
 /**
@@ -20,31 +22,44 @@ export interface ModifiedFavoriteData {
   styleUrls: ['./youtube-video-controls.component.css']
 })
 export class YoutubeVideoControlsComponent {
+
+  /**
+   * The currently selected favorite
+   */
+  currentFavorite: Favorite;
+
+  /**
+   * The current list of favorites
+   */
+  favorites: Favorite[];
+
+  /**
+   * The filename the favorites are saved to/loaded from.
+   */
+  fileName: string;
+
   /**
    * Constructor
    * @param dialog The {@link MatDialog} module for displaying modal dialogs.
    */
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, public favoriteService: FavoritesService) {
+    favoriteService.currentFavorite$.subscribe((currentFavorite: Favorite) => {
+      this.currentFavorite = currentFavorite;
+    });
+
+    favoriteService.favorites$.subscribe((favorites: Favorite[]) => {
+      this.favorites = favorites;
+    });
+
+    favoriteService.fileName$.subscribe((fileName: string) => {
+      this.fileName = fileName;
+    })
+  }
 
   /**
    * Storage for video settings
    */
   private _videoSettings: VideoSettings;
-
-  /**
-   * Name of the user's save file.
-   */
-  saveFileName: string;
-
-  /**
-   * The currently selected favorite in the favorites dropdown.
-   */
-  selectedFavorite: Favorite;
-
-  /**
-   * The list of favorites.
-   */
-  favorites: Favorite[] = [];
 
   /**
    * Getter/Setter for video settings input
@@ -66,8 +81,8 @@ export class YoutubeVideoControlsComponent {
    * Event handler for when the user clicks the "Change Video" button in the "Favorites" tab.
    */
   onChangeVideoFavorite() {
-    if (this.selectedFavorite != null) {
-      this.onChangeVideo({ videoId: this.selectedFavorite.videoId });
+    if (this.currentFavorite != null) {
+      this.onChangeVideo({ videoId: this.currentFavorite.videoId });
     }
   }
 
@@ -89,47 +104,6 @@ export class YoutubeVideoControlsComponent {
   onChangePlaybackSpeed(value: number) {
     this.videoSettings.playbackSpeed = value;
     this.onVideoSettingsChanged.emit(this.videoSettings);
-  }
-
-  /**
-   * Loads a file specified by the user.
-   * @param event The load file event triggered by selecting a file in the file browser.
-   */
-  loadSaveFile(event: any) {
-    let saveFile = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.readAsText(saveFile);
-    fileReader.onload = () => {
-      this.favorites = JSON.parse(fileReader.result.toString()) as Favorite[];
-    }
-    fileReader.onerror = (error) => {
-      console.log(error);
-    }
-
-    this.saveFileName = saveFile.name;
-  }
-
-  /**
-   * Starts download of a file when the save button is clicked.
-   */
-  downloadFile() {
-    let jsonFile = new Blob([JSON.stringify(this.favorites)], {
-      type: 'application/json'
-    });
-
-    // Ensure the filename ends with json extension
-    if (!this.saveFileName.endsWith(".json")) {
-      this.saveFileName += ".json";
-    }
-
-    // Create the link and download.
-    const link = document.createElement('a');
-    link.download = this.saveFileName;
-    link.href = window.URL.createObjectURL(jsonFile);
-    link.click();
-
-    // Release the blob
-    URL.revokeObjectURL(link.href);
   }
 
   /**
@@ -162,9 +136,9 @@ export class YoutubeVideoControlsComponent {
       data: {
         action: "edit",
         favorite: {
-          videoTitle: this.selectedFavorite.videoTitle,
-          artist: this.selectedFavorite.artist,
-          videoId: this.selectedFavorite.videoId
+          videoTitle: this.currentFavorite.videoTitle,
+          artist: this.currentFavorite.artist,
+          videoId: this.currentFavorite.videoId
         }
       }
     });
@@ -172,6 +146,14 @@ export class YoutubeVideoControlsComponent {
     dialogRef.afterClosed().subscribe(result => {
       this._handleModifyFavorite(result);
     });
+  }
+
+  loadSaveFile(event: any) {
+    this.favoriteService.loadFavorites(event.target.files[0]);
+  }
+
+  downloadFile() {
+    this.favoriteService.downloadFavoritesFile();
   }
 
   /**
@@ -184,8 +166,8 @@ export class YoutubeVideoControlsComponent {
     // Valid if there is at least one added favorite.
     let favoriteValid = this.favorites.length > 0;
 
-    // Valid if saveFileName is not null, empty, or blank.
-    let saveFileValid = this.saveFileName && this.saveFileName.trim() !== '';
+    // Valid if fileName is not null, empty, or blank.
+    let saveFileValid = this.fileName && this.fileName.trim() !== '';
 
     return saveFileValid && favoriteValid;
   }
@@ -205,26 +187,13 @@ export class YoutubeVideoControlsComponent {
    */
   private _handleModifyFavorite(result: ModifiedFavoriteData) {
     if (result.action == "delete") {
-      for (var i = 0; i < this.favorites.length; i++) {
-        if (this.favorites[i] == this.selectedFavorite) {
-          this.favorites.splice(i, 1);
-          this.selectedFavorite = null;
-          break;
-        }
-      }
+      this.favoriteService.deleteFavorite();
     }
     else if (result.action == "add") {
-      this.favorites.push(result.favorite);
-      this.selectedFavorite = result.favorite;
+      this.favoriteService.addFavorite(result.favorite);
     }
     else if (result.action == "edit") {
-      for (var i = 0; i < this.favorites.length; i++) {
-        if (this.favorites[i] == this.selectedFavorite) {
-          this.favorites[i] = result.favorite;
-          this.selectedFavorite = this.favorites[i];
-          break;
-        }
-      }
+      this.favoriteService.editFavorite(result.favorite);
     }
   }
 }

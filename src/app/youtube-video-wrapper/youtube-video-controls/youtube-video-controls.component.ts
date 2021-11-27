@@ -1,11 +1,14 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Favorite, VideoSettings } from '../youtube-video-wrapper';
 import { FavoritesDialogComponent } from './favorites-dialog/favorites-dialog.component';
 
-export interface ModifyFavoriteData {
-  action: "delete" | "add" | "edit"
-  favorite?: Favorite;
+/**
+ * Interface for sending and recieving information on modified favorites.
+ */
+export interface ModifiedFavoriteData {
+  action: "delete" | "add" | "edit";  // The action to perform on the favorite.
+  favorite?: Favorite;                // The favorite being modified.
 }
 
 /**
@@ -17,6 +20,10 @@ export interface ModifyFavoriteData {
   styleUrls: ['./youtube-video-controls.component.css']
 })
 export class YoutubeVideoControlsComponent {
+  /**
+   * Constructor
+   * @param dialog The {@link MatDialog} module for displaying modal dialogs.
+   */
   constructor(public dialog: MatDialog) { }
 
   /**
@@ -194,9 +201,9 @@ export class YoutubeVideoControlsComponent {
 
   /**
    * Private handler for when the {@link FavoritesDialogComponent} returns a result.
-   * @param result The {@link ModifyFavoriteData} returned from the {@link FavoritesDialogComponent}
+   * @param result The {@link ModifiedFavoriteData} returned from the {@link FavoritesDialogComponent}
    */
-  private _handleModifyFavorite(result: ModifyFavoriteData) {
+  private _handleModifyFavorite(result: ModifiedFavoriteData) {
     if (result.action == "delete") {
       for (var i = 0; i < this.favorites.length; i++) {
         if (this.favorites[i] == this.selectedFavorite) {

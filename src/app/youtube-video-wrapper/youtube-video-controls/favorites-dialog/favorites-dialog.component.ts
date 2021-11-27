@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ModifyFavoriteData } from '../youtube-video-controls.component';
+import { ModifiedFavoriteData } from '../youtube-video-controls.component';
 
 /**
  * Component to be used as a dialog to modify favorites.
@@ -27,7 +27,7 @@ export class FavoritesDialogComponent implements OnInit {
    * @param formBuilder Builds the form for the dialog.
    * @param data The data to fill the dialog form with.
    */
-  constructor(formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: ModifyFavoriteData) {
+  constructor(formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: ModifiedFavoriteData) {
     this.favoriteForm = formBuilder.group({
       videoTitle: [data.favorite.videoTitle],
       artist: [data.favorite.artist],
@@ -52,20 +52,20 @@ export class FavoritesDialogComponent implements OnInit {
   }
 
   /**
-   * Gets the {@link ModifyFavoriteData} when deleting a favorite.
-   * @returns {@link ModifyFavoriteData} signaling a deletion action.
+   * Gets the {@link ModifiedFavoriteData} when deleting a favorite.
+   * @returns {@link ModifiedFavoriteData} signaling a deletion action.
    */
-  onDeleteFavorite(): ModifyFavoriteData {
+  onDeleteFavorite(): ModifiedFavoriteData {
     return {
       action: "delete"
     };
   }
 
   /**
-   * Gets the {@link ModifyFavoriteData} when adding a favorite.
-   * @returns {@link ModifyFavoriteData} signaling an addition action with the new favorite to add.
+   * Gets the {@link ModifiedFavoriteData} when adding a favorite.
+   * @returns {@link ModifiedFavoriteData} signaling an addition action with the new favorite to add.
    */
-  onAddFavorite(): ModifyFavoriteData {
+  onAddFavorite(): ModifiedFavoriteData {
     return {
       action: "add",
       favorite: {
@@ -77,10 +77,10 @@ export class FavoritesDialogComponent implements OnInit {
   }
 
   /**
-   * Gets the {@link ModifyFavoriteData} when editing a favorite.
-   * @returns {@link ModifyFavoriteData} signaling an addition action with the updated favorite information.
+   * Gets the {@link ModifiedFavoriteData} when editing a favorite.
+   * @returns {@link ModifiedFavoriteData} signaling an addition action with the updated favorite information.
    */
-  onEditFavorite(): ModifyFavoriteData {
+  onEditFavorite(): ModifiedFavoriteData {
     return {
       action: "edit",
       favorite: {

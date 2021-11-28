@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Favorite } from 'src/app/shared/favorite';
-import { FavoritesService } from 'src/app/shared/favorites.service';
+import { FavoriteService } from 'src/app/shared/favorite.service';
 import { VideoSettings } from '../youtube-video-wrapper';
 import { FavoritesDialogComponent } from './favorites-dialog/favorites-dialog.component';
 
@@ -42,7 +42,7 @@ export class YoutubeVideoControlsComponent {
    * Constructor
    * @param dialog The {@link MatDialog} module for displaying modal dialogs.
    */
-  constructor(public dialog: MatDialog, public favoriteService: FavoritesService) {
+  constructor(public dialog: MatDialog, public favoriteService: FavoriteService) {
     favoriteService.currentFavorite$.subscribe((currentFavorite: Favorite) => {
       this.currentFavorite = currentFavorite;
     });

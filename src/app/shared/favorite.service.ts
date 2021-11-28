@@ -8,7 +8,7 @@ import { Favorite } from './favorite';
 @Injectable({
   providedIn: 'root'
 })
-export class FavoritesService {
+export class FavoriteService {
   /**
    * The currently selected favorite.
    */

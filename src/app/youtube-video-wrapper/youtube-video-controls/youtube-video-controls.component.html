@@ -27,7 +27,8 @@
                     <div fxFlex="0 1" fxLayoutAlign="end center">
                         <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
                             <mat-label>Video</mat-label>
-                            <mat-select matNativeControl required [(value)]="currentFavorite">
+                            <mat-select matNativeControl required [(value)]="currentFavorite"
+                                (selectionChange)="onFavoriteSelectionChange()">
                                 <mat-option *ngFor="let favorite of favorites" [value]="favorite">
                                     {{favorite.videoTitle}} - {{favorite.artist}}
                                 </mat-option>
@@ -45,16 +46,17 @@
                 <div fxFlex="0 1" fxLayoutAlign="end center">
                     <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
                         <mat-label>Favorites File</mat-label>
-                        <input matInput type="text" [(ngModel)]="fileName">
+                        <input matInput type="text" [(ngModel)]="fileName" (change)="onFileNameChange()">
                         <button matSuffix mat-icon-button (click)="saveFileInput.click()">
                             <mat-icon>file_open</mat-icon>
                         </button>
-                        <input hidden type="file" accept=".json" #saveFileInput (change)="loadSaveFile($event)" />
+                        <input hidden type="file" accept=".json" #saveFileInput
+                            (change)="onLoadSaveFileClick($event)" />
                     </mat-form-field>
                     <button mat-raised-button color="primary" type="button" style="margin-left: 10px;"
                         (click)="addFavorite()">Add</button>
-                    <button mat-raised-button type="button" style="margin-left: 10px;" (click)="downloadFile()"
-                        [disabled]="!isSaveEnabled()">Save</button>
+                    <button mat-raised-button type="button" style="margin-left: 10px;"
+                        (click)="onDownloadSaveFileClick()" [disabled]="!isSaveEnabled()">Save</button>
                 </div>
             </div>
         </mat-tab>

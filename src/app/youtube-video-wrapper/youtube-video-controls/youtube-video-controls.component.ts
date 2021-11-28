@@ -148,12 +148,33 @@ export class YoutubeVideoControlsComponent {
     });
   }
 
-  loadSaveFile(event: any) {
+  /**
+   * Handler for when the load save file button is clicked.
+   * @param event The event from opening the file browser open dialog.
+   */
+  onLoadSaveFileClick(event: any) {
     this.favoriteService.loadFavorites(event.target.files[0]);
   }
 
-  downloadFile() {
+  /**
+   * Handler for when the download save file button is clicked.
+   */
+  onDownloadSaveFileClick() {
     this.favoriteService.downloadFavoritesFile();
+  }
+
+  /**
+   * Handler for when the favorites dropdown selection is changed.
+   */
+  onFavoriteSelectionChange() {
+    this.favoriteService.setCurrentFavorite(this.currentFavorite);
+  }
+
+  /**
+   * Handler for when the save file name is changed.
+   */
+  onFileNameChange() {
+    this.favoriteService.setFileName(this.fileName);
   }
 
   /**

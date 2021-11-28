@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { Favorite } from './favorite';
 
+/**
+ * Service to interact with favorites.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -11,6 +14,9 @@ export class FavoritesService {
    */
   private _currentFavorite: BehaviorSubject<Favorite> = new BehaviorSubject<Favorite>(null);
 
+  /**
+   * Wrapped {@link Observable<Favorite>} for the currently selected favorite.
+   */
   public readonly currentFavorite$: Observable<Favorite> = this._currentFavorite.asObservable();
 
   /**
@@ -18,6 +24,9 @@ export class FavoritesService {
    */
   private _favorites: BehaviorSubject<Favorite[]> = new BehaviorSubject<Favorite[]>([]);
 
+  /**
+   * Wrapped {@link Observable<Favorite[]>} for the favorites list.
+   */
   public readonly favorites$: Observable<Favorite[]> = this._favorites.asObservable();
 
   /**
@@ -25,9 +34,10 @@ export class FavoritesService {
    */
   private _fileName: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
+  /**
+   * Wrapped {@link Observable<string>} for the file name.
+   */
   public readonly fileName$: Observable<string> = this._fileName.asObservable();
-
-  constructor() { }
 
   /**
    * Loads a file specified by the user.
@@ -51,12 +61,12 @@ export class FavoritesService {
    * Downloads the {@link Favorite}s as a json file.
    */
   downloadFavoritesFile() {
-    let jsonFile = new Blob([JSON.stringify(this._favorites)], {
+    let jsonFile = new Blob([JSON.stringify(this._favorites.value)], {
       type: 'application/json'
     });
 
     // Ensure the filename ends with json extension
-    if (!this._fileName.getValue().endsWith(".json")) {
+    if (!this._fileName.value.endsWith(".json")) {
       this._fileName.next(this._fileName.value + ".json");
     }
 
@@ -75,6 +85,7 @@ export class FavoritesService {
    * @param favorite The {@link Favorite} to be added.
    */
   addFavorite(favorite: Favorite) {
+    this._currentFavorite.next(favorite);
     this._favorites.next(this._favorites.value.concat(favorite));
   }
 
@@ -83,8 +94,10 @@ export class FavoritesService {
    */
   deleteFavorite() {
     for (var i = 0; i < this._favorites.value.length; i++) {
-      if (this._favorites[i] == this._currentFavorite) {
-        this._favorites.next(this._favorites.value.splice(i, 1));
+      console.log("Current favorite: " + this._currentFavorite.value);
+      if (this._favorites.value[i] == this._currentFavorite.value) {
+        this._favorites.value.splice(i, 1);
+        this._favorites.next(this._favorites.value);
         this._currentFavorite.next(null);
         break;
       }
@@ -97,8 +110,9 @@ export class FavoritesService {
    */
   editFavorite(updatedFavorite: Favorite) {
     for (var i = 0; i < this._favorites.value.length; i++) {
-      if (this._favorites[i] == this._currentFavorite) {
-        this._favorites[i] = updatedFavorite;
+      console.log("Current favorite: " + this._currentFavorite.value);
+      if (this._favorites.value[i] == this._currentFavorite.value) {
+        this._favorites.value[i] = updatedFavorite;
         this._favorites.next(this._favorites.value);
         this._currentFavorite.next(this._favorites.value[i]);
         break;
@@ -111,6 +125,15 @@ export class FavoritesService {
    * @param favorite The new favorite to select.
    */
   setCurrentFavorite(favorite: Favorite) {
+    console.log("Set current favorite: " + favorite);
     this._currentFavorite.next(favorite);
+  }
+
+  /**
+   * Sets the file name.
+   * @param fileName the new value for the file name.
+   */
+  setFileName(fileName: string) {
+    this._fileName.next(fileName);
   }
 }

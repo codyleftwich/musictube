@@ -105,7 +105,7 @@ export class TimeInputComponent implements OnInit {
     this._hoursInput.nativeElement.value = Math.floor(seconds / 3600);
     this._minutesInput.nativeElement.value = Math.floor(seconds / 60 % 60);
     this._secondInput.nativeElement.value = Math.floor(seconds % 60);
-    if (this._showMilliseconds) {
+    if (this.showMilliseconds && this._millisecondsInput) {
       this._millisecondsInput.nativeElement.value = Math.floor((seconds % 1) * 1000);
     }
   }
@@ -120,7 +120,7 @@ export class TimeInputComponent implements OnInit {
     result += Number(this._minutesInput.nativeElement.value) * 60;
     result += Number(this._secondInput.nativeElement.value);
 
-    if (this._showMilliseconds) {
+    if (this.showMilliseconds && this._millisecondsInput) {
       result += Number(this._millisecondsInput.nativeElement.value) / 1000;
     }
 

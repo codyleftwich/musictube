@@ -7,7 +7,7 @@
                     <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="end center">
                         <mat-form-field appearance="fill" style="margin-right: 10px; margin-bottom: -1.25em;">
                             <mat-label>Video Id</mat-label>
-                            <input matInput placeholder="VideoId" [ngModel]="videoSettings.videoId" name="videoId">
+                            <input matInput placeholder="VideoId" [ngModel]="videoInfo.videoId" name="videoId">
                         </mat-form-field>
                     </div>
                     <div fxFlex="0 1 calc(20% - 20px)" fxLayoutAlign="start center">
@@ -27,7 +27,8 @@
                     <div fxFlex="0 1" fxLayoutAlign="end center">
                         <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
                             <mat-label>Video</mat-label>
-                            <mat-select matNativeControl required [(value)]="selectedFavorite">
+                            <mat-select matNativeControl required [(value)]="currentFavorite"
+                                (selectionChange)="onFavoriteSelectionChange()">
                                 <mat-option *ngFor="let favorite of favorites" [value]="favorite">
                                     {{favorite.videoTitle}} - {{favorite.artist}}
                                 </mat-option>
@@ -37,24 +38,25 @@
                     <div fxFlex="0 1" fxLayoutAlign="end center">
                         <button mat-raised-button color="primary" type="submit" style="margin-left: 10px;">Change
                             Video</button>
-                        <button mat-raised-button type="button" [disabled]="!selectedFavorite"
-                            style="margin-left: 10px;" (click)="editFavorite()">Edit</button>
+                        <button mat-raised-button type="button" [disabled]="!currentFavorite" style="margin-left: 10px;"
+                            (click)="editFavorite()">Edit</button>
                     </div>
                 </form>
                 <!-- File Selection, Add, Load/Save -->
                 <div fxFlex="0 1" fxLayoutAlign="end center">
                     <mat-form-field appearance="fill" style="margin-bottom: -1.25em;">
                         <mat-label>Favorites File</mat-label>
-                        <input matInput type="text" [(ngModel)]="saveFileName">
+                        <input matInput type="text" [(ngModel)]="fileName" (change)="onFileNameChange()">
                         <button matSuffix mat-icon-button (click)="saveFileInput.click()">
                             <mat-icon>file_open</mat-icon>
                         </button>
-                        <input hidden type="file" accept=".json" #saveFileInput (change)="loadSaveFile($event)" />
+                        <input hidden type="file" accept=".json" #saveFileInput
+                            (change)="onLoadSaveFileClick($event)" />
                     </mat-form-field>
                     <button mat-raised-button color="primary" type="button" style="margin-left: 10px;"
                         (click)="addFavorite()">Add</button>
-                    <button mat-raised-button type="button" style="margin-left: 10px;" (click)="downloadFile()"
-                        [disabled]="!isSaveEnabled()">Save</button>
+                    <button mat-raised-button type="button" style="margin-left: 10px;"
+                        (click)="onDownloadSaveFileClick()" [disabled]="!isSaveEnabled()">Save</button>
                 </div>
             </div>
         </mat-tab>
@@ -67,15 +69,15 @@
         <mat-tab label="Playback Speed" class="mt-fill">
             <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
                 <div fxFlex="0 1 calc(70% - 20px)" fxLayoutAlign="center center">
-                    <mat-slider [disabled]="!videoSettings.hasStarted" thumbLabel [displayWith]="formatLabel"
-                        [ngModel]="videoSettings.playbackSpeed" (change)="onChangePlaybackSpeed($event.value)"
+                    <mat-slider [disabled]="!videoInfo.hasStarted" thumbLabel [displayWith]="formatLabel"
+                        [ngModel]="videoInfo.playbackSpeed" (change)="onChangePlaybackSpeed($event.value)"
                         tickInterval="1" step=".05" min=".25" max="2.0" aria-label="units">
                     </mat-slider>
                 </div>
                 <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="center center">
                     <div fxLayout="row" fxFill fxLayoutAlign="space-between center">
                         <label>Current Playback Speed</label>
-                        <label>{{videoSettings.playbackSpeed}}</label>
+                        <label>{{videoInfo.playbackSpeed}}</label>
                     </div>
                 </div>
             </div>

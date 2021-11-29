@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Favorite, VideoSettings } from '../youtube-video-wrapper';
+import { Favorite } from 'src/app/shared/favorite';
+import { FavoriteService } from 'src/app/shared/favorite.service';
+import { VideoInfo } from 'src/app/shared/video-info';
+import { VideoInfoService } from 'src/app/shared/video-info.service';
 import { FavoritesDialogComponent } from './favorites-dialog/favorites-dialog.component';
 
 /**
@@ -20,54 +23,55 @@ export interface ModifiedFavoriteData {
   styleUrls: ['./youtube-video-controls.component.css']
 })
 export class YoutubeVideoControlsComponent {
+
+  /**
+   * The currently selected favorite
+   */
+  currentFavorite: Favorite;
+
+  /**
+   * The current list of favorites
+   */
+  favorites: Favorite[];
+
+  /**
+   * The filename the favorites are saved to/loaded from.
+   */
+  fileName: string;
+
   /**
    * Constructor
    * @param dialog The {@link MatDialog} module for displaying modal dialogs.
    */
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, public favoriteService: FavoriteService, public videoInfoService: VideoInfoService) {
+    favoriteService.currentFavorite$.subscribe((currentFavorite: Favorite) => {
+      this.currentFavorite = currentFavorite;
+    });
 
-  /**
-   * Storage for video settings
-   */
-  private _videoSettings: VideoSettings;
+    favoriteService.favorites$.subscribe((favorites: Favorite[]) => {
+      this.favorites = favorites;
+    });
 
-  /**
-   * Name of the user's save file.
-   */
-  saveFileName: string;
+    favoriteService.fileName$.subscribe((fileName: string) => {
+      this.fileName = fileName;
+    });
 
-  /**
-   * The currently selected favorite in the favorites dropdown.
-   */
-  selectedFavorite: Favorite;
-
-  /**
-   * The list of favorites.
-   */
-  favorites: Favorite[] = [];
-
-  /**
-   * Getter/Setter for video settings input
-   */
-  @Input()
-  get videoSettings(): VideoSettings {
-    return this._videoSettings;
-  }
-  set videoSettings(videoSettings: VideoSettings) {
-    this._videoSettings = videoSettings;
+    videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
+      this.videoInfo = videoInfo;
+    });
   }
 
   /**
-   * EventEmitter used when video settings are changed.
+   * Storage for video info
    */
-  @Output() onVideoSettingsChanged = new EventEmitter<VideoSettings>();
+  videoInfo: VideoInfo;
 
   /**
    * Event handler for when the user clicks the "Change Video" button in the "Favorites" tab.
    */
   onChangeVideoFavorite() {
-    if (this.selectedFavorite != null) {
-      this.onChangeVideo({ videoId: this.selectedFavorite.videoId });
+    if (this.currentFavorite != null) {
+      this.onChangeVideo({ videoId: this.currentFavorite.videoId });
     }
   }
 
@@ -75,10 +79,10 @@ export class YoutubeVideoControlsComponent {
    * Event handler for when the user clicks the "Change Video" button.
    */
   onChangeVideo(data: any) {
-    if (data.videoId != this.videoSettings.videoId) {
-      this.videoSettings.videoId = data.videoId;
-      this.videoSettings.playbackSpeed = 1.0; // Reset the playback speed.
-      this.onVideoSettingsChanged.emit(this.videoSettings);
+    if (data.videoId != this.videoInfo.videoId) {
+      this.videoInfo.videoId = data.videoId;
+      this.videoInfo.playbackSpeed = 1.0; // Reset the playback speed.
+      this.videoInfoService.setVideoInfo(this.videoInfo);
     }
   }
 
@@ -87,49 +91,8 @@ export class YoutubeVideoControlsComponent {
    * @param value The value represented by the position of the slider.
    */
   onChangePlaybackSpeed(value: number) {
-    this.videoSettings.playbackSpeed = value;
-    this.onVideoSettingsChanged.emit(this.videoSettings);
-  }
-
-  /**
-   * Loads a file specified by the user.
-   * @param event The load file event triggered by selecting a file in the file browser.
-   */
-  loadSaveFile(event: any) {
-    let saveFile = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.readAsText(saveFile);
-    fileReader.onload = () => {
-      this.favorites = JSON.parse(fileReader.result.toString()) as Favorite[];
-    }
-    fileReader.onerror = (error) => {
-      console.log(error);
-    }
-
-    this.saveFileName = saveFile.name;
-  }
-
-  /**
-   * Starts download of a file when the save button is clicked.
-   */
-  downloadFile() {
-    let jsonFile = new Blob([JSON.stringify(this.favorites)], {
-      type: 'application/json'
-    });
-
-    // Ensure the filename ends with json extension
-    if (!this.saveFileName.endsWith(".json")) {
-      this.saveFileName += ".json";
-    }
-
-    // Create the link and download.
-    const link = document.createElement('a');
-    link.download = this.saveFileName;
-    link.href = window.URL.createObjectURL(jsonFile);
-    link.click();
-
-    // Release the blob
-    URL.revokeObjectURL(link.href);
+    this.videoInfo.playbackSpeed = value;
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 
   /**
@@ -141,15 +104,17 @@ export class YoutubeVideoControlsComponent {
       data: {
         action: "add",
         favorite: {
-          videoTitle: "title",
-          artist: "artist",
-          videoId: "videoId"
+          videoTitle: this.videoInfo.videoTitle,
+          artist: this.videoInfo.artist,
+          videoId: this.videoInfo.videoId
         }
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this._handleModifyFavorite(result);
+      if (result) {
+        this._handleModifyFavorite(result);
+      }
     });
   }
 
@@ -162,16 +127,47 @@ export class YoutubeVideoControlsComponent {
       data: {
         action: "edit",
         favorite: {
-          videoTitle: this.selectedFavorite.videoTitle,
-          artist: this.selectedFavorite.artist,
-          videoId: this.selectedFavorite.videoId
+          videoTitle: this.currentFavorite.videoTitle,
+          artist: this.currentFavorite.artist,
+          videoId: this.currentFavorite.videoId
         }
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this._handleModifyFavorite(result);
+      if (result) {
+        this._handleModifyFavorite(result);
+      }
     });
+  }
+
+  /**
+   * Handler for when the load save file button is clicked.
+   * @param event The event from opening the file browser open dialog.
+   */
+  onLoadSaveFileClick(event: any) {
+    this.favoriteService.loadFavorites(event.target.files[0]);
+  }
+
+  /**
+   * Handler for when the download save file button is clicked.
+   */
+  onDownloadSaveFileClick() {
+    this.favoriteService.downloadFavoritesFile();
+  }
+
+  /**
+   * Handler for when the favorites dropdown selection is changed.
+   */
+  onFavoriteSelectionChange() {
+    this.favoriteService.setCurrentFavorite(this.currentFavorite);
+  }
+
+  /**
+   * Handler for when the save file name is changed.
+   */
+  onFileNameChange() {
+    this.favoriteService.setFileName(this.fileName);
   }
 
   /**
@@ -184,8 +180,8 @@ export class YoutubeVideoControlsComponent {
     // Valid if there is at least one added favorite.
     let favoriteValid = this.favorites.length > 0;
 
-    // Valid if saveFileName is not null, empty, or blank.
-    let saveFileValid = this.saveFileName && this.saveFileName.trim() !== '';
+    // Valid if fileName is not null, empty, or blank.
+    let saveFileValid = this.fileName && this.fileName.trim() !== '';
 
     return saveFileValid && favoriteValid;
   }
@@ -205,26 +201,13 @@ export class YoutubeVideoControlsComponent {
    */
   private _handleModifyFavorite(result: ModifiedFavoriteData) {
     if (result.action == "delete") {
-      for (var i = 0; i < this.favorites.length; i++) {
-        if (this.favorites[i] == this.selectedFavorite) {
-          this.favorites.splice(i, 1);
-          this.selectedFavorite = null;
-          break;
-        }
-      }
+      this.favoriteService.deleteFavorite();
     }
     else if (result.action == "add") {
-      this.favorites.push(result.favorite);
-      this.selectedFavorite = result.favorite;
+      this.favoriteService.addFavorite(result.favorite);
     }
     else if (result.action == "edit") {
-      for (var i = 0; i < this.favorites.length; i++) {
-        if (this.favorites[i] == this.selectedFavorite) {
-          this.favorites[i] = result.favorite;
-          this.selectedFavorite = this.favorites[i];
-          break;
-        }
-      }
+      this.favoriteService.editFavorite(result.favorite);
     }
   }
 }

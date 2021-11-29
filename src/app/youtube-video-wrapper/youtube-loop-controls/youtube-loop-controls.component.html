@@ -6,7 +6,7 @@
                 <app-time-input #startTimeInput (timeInputChangedEvent)="onStartTimeInputChanged($event)"
                     [fieldsEnabled]="canCaptureTime" [isReadOnly]="true"></app-time-input>
                 <button mat-raised-button color="primary" (click)="onCaptureStartTime()"
-                    [disabled]="!videoSettings.hasStarted">Capture
+                    [disabled]="!videoInfo.hasStarted">Capture
                     Start</button>
             </div>
         </fieldset>
@@ -16,7 +16,7 @@
                 <app-time-input #endTimeInput (timeInputChangedEvent)="onEndTimeInputChanged($event)"
                     [fieldsEnabled]="canCaptureTime" [isReadOnly]="true"></app-time-input>
                 <button mat-raised-button color="primary" (click)="onCaptureEndTime()"
-                    [disabled]="!videoSettings.hasStarted">Capture
+                    [disabled]="!videoInfo.hasStarted">Capture
                     End</button>
             </div>
         </fieldset>

@@ -18,12 +18,3 @@ export interface LoopSettings {
     loopDelay: number;      // Amount of time between loops.
     isLooping: boolean;     // If the loop is currently active.
 }
-
-/**
- * Object representing a saved favorite.
- */
-export interface Favorite {
-    videoTitle: string;     // Title of the video
-    artist: string;         // The artist
-    videoId: string;        // The video id
-}

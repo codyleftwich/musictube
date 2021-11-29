@@ -94,7 +94,6 @@ export class FavoriteService {
    */
   deleteFavorite() {
     for (var i = 0; i < this._favorites.value.length; i++) {
-      console.log("Current favorite: " + this._currentFavorite.value);
       if (this._favorites.value[i] == this._currentFavorite.value) {
         this._favorites.value.splice(i, 1);
         this._favorites.next(this._favorites.value);
@@ -110,7 +109,6 @@ export class FavoriteService {
    */
   editFavorite(updatedFavorite: Favorite) {
     for (var i = 0; i < this._favorites.value.length; i++) {
-      console.log("Current favorite: " + this._currentFavorite.value);
       if (this._favorites.value[i] == this._currentFavorite.value) {
         this._favorites.value[i] = updatedFavorite;
         this._favorites.next(this._favorites.value);
@@ -125,7 +123,6 @@ export class FavoriteService {
    * @param favorite The new favorite to select.
    */
   setCurrentFavorite(favorite: Favorite) {
-    console.log("Set current favorite: " + favorite);
     this._currentFavorite.next(favorite);
   }
 

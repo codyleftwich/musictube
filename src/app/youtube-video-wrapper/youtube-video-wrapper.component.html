@@ -1,14 +1,11 @@
 <div fxFill fxLayout="column" fxLayoutAlign="start stretch">
     <div class="mt-fill" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="0 1 calc(50%)">
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
-            <app-youtube-video [videoSettings]="videoSettings" [loopSettings]="loopSettings"
-                (onVideoSettingsChanged)="onVideoSettingsChanged($event)"
-                (onLoopSettingsChanged)="onLoopSettingsChanged($event)" class="mt-fill" #video>
+            <app-youtube-video class="mt-fill" #video>
             </app-youtube-video>
         </div>
         <div fxFlex="0 1 calc(50%)" fxLayoutAlign="center center">
-            <app-youtube-video-controls [videoSettings]="videoSettings"
-                (onVideoSettingsChanged)="onVideoSettingsChanged($event)" class="mt-fill" #videoController>
+            <app-youtube-video-controls class="mt-fill" #videoController>
             </app-youtube-video-controls>
         </div>
     </div>
@@ -23,10 +20,8 @@
             <mat-card class="mt-card-layout" fxLayout="column" fxLayoutAlign="center stretch">
                 <mat-tab-group class="mt-fill">
                     <mat-tab label="Loop Controls">
-                        <app-youtube-loop-controls [videoSettings]="videoSettings" [loopSettings]="loopSettings"
-                            (onLoopSettingsChanged)="onLoopSettingsChanged($event)"
-                            (captureStartTimeEvent)="onCaptureStartTime()" (captureEndTimeEvent)="onCaptureEndTime()"
-                            #loopController class="mt-fill">
+                        <app-youtube-loop-controls (captureStartTimeEvent)="onCaptureStartTime()"
+                            (captureEndTimeEvent)="onCaptureEndTime()" #loopController class="mt-fill">
                         </app-youtube-loop-controls>
                     </mat-tab>
                     <mat-tab label="Metronome">

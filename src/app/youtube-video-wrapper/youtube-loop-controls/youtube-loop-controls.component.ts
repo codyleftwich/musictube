@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, SimpleChanges } from '@angular/core';
 import { TimeInputComponent } from 'src/app/shared/time-input/time-input.component';
+import { VideoInfo } from 'src/app/shared/video-info';
+import { VideoInfoService } from 'src/app/shared/video-info.service';
+import { YoutubeVideoControlsComponent } from '../youtube-video-controls/youtube-video-controls.component';
 import { LoopSettings, VideoSettings } from '../youtube-video-wrapper';
 
 /**
@@ -37,14 +40,19 @@ export class YoutubeLoopControlsComponent {
   loopButtonText: string = YoutubeLoopControlsComponent.START_LOOP;
 
   /**
+   * Flag for if the loop has been started.
+   */
+  private _loopStarted: boolean = false;
+
+  /**
    * Determines whether or not a configuration is valid to loop around.
    *
    * @returns True if the loop can be started.
    */
   get isLoopValid(): boolean {
-    return this._videoSettings.hasStarted
-      && (this._loopSettings.startTime < this._loopSettings.endTime)
-      && (this._loopSettings.endTime <= this._videoSettings.videoLength);
+    return this.videoInfo.hasStarted
+      && (this.videoInfo.loopSettings.startTime < this.videoInfo.loopSettings.endTime)
+      && (this.videoInfo.loopSettings.endTime <= this.videoInfo.videoLength);
   }
 
   /**
@@ -53,44 +61,13 @@ export class YoutubeLoopControlsComponent {
    * @return True if the user can interact with the loop times.
    */
   get canCaptureTime(): boolean {
-    return !this._loopSettings.isLooping && this.videoSettings.hasStarted;
-  }
-
-  /**
-   * Private backing for loopSettings.
-   */
-  private _loopSettings: LoopSettings;
-
-  /**
-   * Getter/Setter for loop settings input
-   */
-  @Input()
-  get loopSettings(): LoopSettings {
-    return this._loopSettings;
-  }
-  set loopSettings(loopSettings: LoopSettings) {
-    this._loopSettings = loopSettings;
-    this._startTimeInput.setInputValuesBySeconds(loopSettings.startTime);
-    this._endTimeInput.setInputValuesBySeconds(loopSettings.endTime);
-    this.loopButtonText =
-      loopSettings.isLooping ? YoutubeLoopControlsComponent.STOP_LOOP : YoutubeLoopControlsComponent.START_LOOP;
+    return !this.videoInfo.loopSettings.isLooping && this.videoInfo.hasStarted;
   }
 
   /**
    * Storage for video settings
    */
-  private _videoSettings: VideoSettings;
-
-  /**
-   * Getter/Setter for video settings input
-   */
-  @Input()
-  get videoSettings(): VideoSettings {
-    return this._videoSettings;
-  }
-  set videoSettings(videoSettings: VideoSettings) {
-    this._videoSettings = videoSettings;
-  }
+  videoInfo: VideoInfo;
 
   /**
    * EventEmitter used when user requests to capture start time.
@@ -102,10 +79,27 @@ export class YoutubeLoopControlsComponent {
   */
   @Output() captureEndTimeEvent = new EventEmitter();
 
-  /**
-   * EventEmitter used when loop settings are changed.
-   */
-  @Output() onLoopSettingsChanged = new EventEmitter<LoopSettings>();
+  constructor(public videoInfoService: VideoInfoService) {
+    videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
+      this.videoInfo = videoInfo;
+
+      console.log("YoutubeLoopControlsComponent videoInfo changed");
+
+      if (this._startTimeInput && this._endTimeInput) {
+        console.log("setting input values.");
+        this._startTimeInput.setInputValuesBySeconds(this.videoInfo.loopSettings.startTime);
+        this._endTimeInput.setInputValuesBySeconds(this.videoInfo.loopSettings.endTime);
+      }
+
+      if (this.videoInfo.loopSettings.isLooping) {
+        this.loopButtonText = YoutubeLoopControlsComponent.STOP_LOOP;
+      }
+      else {
+        this.loopButtonText = YoutubeLoopControlsComponent.START_LOOP;
+      }
+
+    });
+  }
 
   /**
    * Event handler for when the user requests the start time to be captured.
@@ -127,9 +121,9 @@ export class YoutubeLoopControlsComponent {
    * @param seconds The number of seconds currently configured in the input field.
    */
   onStartTimeInputChanged(seconds: number) {
-    if (seconds != this._loopSettings.startTime) {
-      this._loopSettings.startTime = seconds;
-      this.onLoopSettingsChanged.emit(this._loopSettings);
+    if (seconds != this.videoInfo.loopSettings.startTime) {
+      this.videoInfo.loopSettings.startTime = seconds;
+      this.videoInfoService.setVideoInfo(this.videoInfo);
     }
   }
 
@@ -139,9 +133,9 @@ export class YoutubeLoopControlsComponent {
    * @param seconds The number of seconds currently configured in the input field.
    */
   onEndTimeInputChanged(seconds: number) {
-    if (seconds != this._loopSettings.endTime) {
-      this._loopSettings.endTime = seconds;
-      this.onLoopSettingsChanged.emit(this._loopSettings);
+    if (seconds != this.videoInfo.loopSettings.endTime) {
+      this.videoInfo.loopSettings.endTime = seconds;
+      this.videoInfoService.setVideoInfo(this.videoInfo);
     }
   }
 
@@ -151,9 +145,9 @@ export class YoutubeLoopControlsComponent {
    * @param seconds The number of seconds currently configured in the input field.
    */
   onLoopLengthInputChanged(seconds: number) {
-    if (seconds != this._loopSettings.loopDelay) {
-      this._loopSettings.loopDelay = seconds;
-      this.onLoopSettingsChanged.emit(this._loopSettings);
+    if (seconds != this.videoInfo.loopSettings.loopDelay) {
+      this.videoInfo.loopSettings.loopDelay = seconds;
+      this.videoInfoService.setVideoInfo(this.videoInfo);
     }
   }
 
@@ -161,15 +155,7 @@ export class YoutubeLoopControlsComponent {
    * Event handler when the toggle loop button is pressed.
    */
   toggleLoop() {
-    if (this._loopSettings.isLooping) {
-      this._loopSettings.isLooping = false;
-      this.loopButtonText = YoutubeLoopControlsComponent.START_LOOP;
-    }
-    else {
-      this._loopSettings.isLooping = true;
-      this.loopButtonText = YoutubeLoopControlsComponent.STOP_LOOP;
-    }
-
-    this.onLoopSettingsChanged.emit(this._loopSettings);
+    this.videoInfo.loopSettings.isLooping = !this.videoInfo.loopSettings.isLooping;
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 }

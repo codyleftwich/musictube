@@ -1,7 +1,8 @@
 import { Component, Input, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { interval, Subscription } from 'rxjs';
-import { LoopSettings, VideoSettings } from '../youtube-video-wrapper';
+import { VideoInfo } from 'src/app/shared/video-info';
+import { VideoInfoService } from 'src/app/shared/video-info.service';
 
 /**
  * Component responsible for interaction with the YouTube video.
@@ -47,47 +48,15 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
   private readonly _beepAudio: HTMLAudioElement = new Audio("assets/audio/beep.wav");
 
   /**
-   * Private backing for videoSettings.
+   * The video information.
    */
-  private _videoSettings: VideoSettings;
+  videoInfo: VideoInfo;
 
-  /**
-   * Video settings to be piped through to the youtube video container.
-   */
-  @Input()
-  get videoSettings(): VideoSettings {
-    return this._videoSettings;
+  constructor(public videoInfoService: VideoInfoService) {
+    videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
+      this.videoInfo = videoInfo;
+    });
   }
-  set videoSettings(videoSettings: VideoSettings) {
-    this._videoSettings = videoSettings;
-    this._onSettingsChange();
-  }
-
-  /**
-   * Private backing for loopSettings.
-   */
-  private _loopSettings: LoopSettings;
-
-  /**
-   * Getter/Setter for loop settings input
-   */
-  @Input()
-  get loopSettings(): LoopSettings {
-    return this._loopSettings;
-  }
-  set loopSettings(loopSettings: LoopSettings) {
-    this._loopSettings = loopSettings;
-  }
-
-  /**
-   * EventEmitter used when video settings are changed.
-   */
-  @Output() onVideoSettingsChanged = new EventEmitter<VideoSettings>()
-
-  /**
-   * EventEmitter used when loop settings are changed.
-   */
-  @Output() onLoopSettingsChanged = new EventEmitter<LoopSettings>();
 
   /**
    * Initialization code.
@@ -101,52 +70,53 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
     this._beepAudio.volume = .8;
 
     this._stateChangeSubscription = this._youtubePlayer.stateChange.subscribe(
-      (value) => {
-        if (value.data == YT.PlayerState.PLAYING) {
-          this.videoSettings.isPlaying = true;
-          this.videoSettings.hasStarted = true;
+      (value: any) => {
+        if (value.data == YT.PlayerState.PLAYING) {       // The video is playing.
+          this.videoInfo.isPlaying = true;
+          this.videoInfo.hasStarted = true;
 
           // Exit the loop when the user plays before the loop delay has finished.
           if (this._waitingForLoop) {
-            this.loopSettings.isLooping = false;
+            this.videoInfo.loopSettings.isLooping = false;
             this._waitingForLoop = false;
             clearInterval(this._beepInterval);
-            this.onLoopSettingsChanged.emit(this.loopSettings);
           }
         }
-        else if (value.data == YT.PlayerState.PAUSED) {
-          this.videoSettings.isPlaying = false;
-          this.videoSettings.hasStarted = true;
+        else if (value.data == YT.PlayerState.PAUSED) {     // The video is paused.
+          this.videoInfo.isPlaying = false;
+          this.videoInfo.hasStarted = true;
 
           // Exit the loop when the user pauses during it.
-          if (this.loopSettings.isLooping && this._youtubePlayer.getCurrentTime() != this.loopSettings.startTime) {
-            this.loopSettings.isLooping = false;
-            this.onLoopSettingsChanged.emit(this.loopSettings);
+          if (this.videoInfo.loopSettings.isLooping && this._youtubePlayer.getCurrentTime() != this.videoInfo.loopSettings.startTime) {
+            this.videoInfo.loopSettings.isLooping = false;
+            this._waitingForLoop = false;
           }
         }
-        else if (value.data == YT.PlayerState.UNSTARTED) {
-          this.videoSettings.hasStarted = false;
-          this.loopSettings.isLooping = false;
-          this.onLoopSettingsChanged.emit(this.loopSettings);
+        else if (value.data == YT.PlayerState.UNSTARTED) {  // State when the player first loads a video
+          this.videoInfo.hasStarted = false;
+          this.videoInfo.loopSettings.isLooping = false;
         }
 
-        this.videoSettings.videoLength = this._youtubePlayer.getDuration();
-        this.onVideoSettingsChanged.emit(this.videoSettings);
+        this.videoInfo.videoTitle = value.target.getVideoData().title;
+        this.videoInfo.artist = value.target.getVideoData().author;
+        this.videoInfo.videoLength = this._youtubePlayer.getDuration();
+
+        this.videoInfoService.setVideoInfo(this.videoInfo);
       }
     );
 
     this._playbackRateSubscription = this._youtubePlayer.playbackRateChange.subscribe(
       (value) => {
-        if (value.data != this._videoSettings.playbackSpeed) {
-          this.videoSettings.playbackSpeed = value.data;
-          this.onVideoSettingsChanged.emit(this.videoSettings);
+        if (value.data != this.videoInfo.playbackSpeed) {
+          this.videoInfo.playbackSpeed = value.data;
+          this.videoInfoService.setVideoInfo(this.videoInfo);
         }
       }
     )
 
     this._loopPoll = interval(30)
       .subscribe(() => {
-        if (!this._waitingForLoop && this.loopSettings.isLooping && this.getCurrentTime() >= this.loopSettings.endTime) {
+        if (!this._waitingForLoop && this.videoInfo.loopSettings.isLooping && this.getCurrentTime() >= this.videoInfo.loopSettings.endTime) {
           this._loopVideo();
         }
       });
@@ -167,7 +137,6 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
    */
   getCurrentTime(): number {
     let time = this._youtubePlayer.getCurrentTime();
-    console.log("Captured time: " + time);
     return time;
   }
 
@@ -176,7 +145,7 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
    */
   private _loopVideo(): void {
     this._youtubePlayer.pauseVideo();
-    this._youtubePlayer.seekTo(this._loopSettings.startTime, true);
+    this._youtubePlayer.seekTo(this.videoInfo.loopSettings.startTime, true);
     this._waitingForLoop = true;
 
     setTimeout(() => {
@@ -184,36 +153,14 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
       this._beepAudio.play();
       this._youtubePlayer.playVideo();
       this._waitingForLoop = false;
-    }, this._loopSettings.loopDelay * 1000);
+    }, this.videoInfo.loopSettings.loopDelay * 1000);
 
-    if (this._loopSettings.loopDelay != 0) {
+    if (this.videoInfo.loopSettings.loopDelay != 0) {
       this._beepInterval = setInterval(() => {
-        this._beepAudio.play();
+        if (this.videoInfo.loopSettings.isLooping) {
+          this._beepAudio.play();
+        }
       }, 1000);
-    }
-  }
-
-  /**
-   * Update the youtube video based on incoming changes.
-   */
-  private _onSettingsChange(): void {
-    if (this.videoSettings.isPlaying) {
-      if (this._youtubePlayer.getPlayerState() != YT.PlayerState.PLAYING) {
-        this._youtubePlayer.playVideo();
-      }
-    }
-    else {
-      if (this._youtubePlayer.getPlayerState() == YT.PlayerState.PLAYING) {
-        this._youtubePlayer.pauseVideo();
-      }
-    }
-
-    if (this._youtubePlayer.getPlaybackRate() != this.videoSettings.playbackSpeed) {
-      this._youtubePlayer.setPlaybackRate(this.videoSettings.playbackSpeed);
-    }
-
-    if (this._youtubePlayer.videoId != this._videoSettings.videoId) {
-      this._youtubePlayer.videoId = this._videoSettings.videoId;
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { VideoInfo } from '../shared/video-info';
+import { VideoInfoService } from '../shared/video-info.service';
 import { YoutubeLoopControlsComponent } from './youtube-loop-controls/youtube-loop-controls.component';
-import { LoopSettings, VideoSettings } from './youtube-video-wrapper';
 import { YoutubeVideoComponent } from './youtube-video/youtube-video.component';
 
 @Component({
@@ -27,87 +28,49 @@ export class YoutubeVideoWrapperComponent implements OnInit {
   /**
    * Video settings to be passed between the video and the video controller component.
    */
-  videoSettings: VideoSettings;
+  videoInfo: VideoInfo;
 
-  /**
-   * Loop settings to pass between the video and the loop controller component.
-   */
-  loopSettings: LoopSettings;
+  constructor(public videoInfoService: VideoInfoService) {
+    videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
+      this.videoInfo = videoInfo;
+    });
+  }
 
   /**
    * Intialization code.
    */
   ngOnInit(): void {
-    this.videoSettings = {
-      videoId: this._defaultVideoId,
-      playbackSpeed: 1.0,
-      isPlaying: false,
-      hasStarted: false,
-      videoLength: 0
-    };
-
-    this.loopSettings = {
-      startTime: 0,
-      endTime: 0,
-      loopDelay: 0,
-      isLooping: false
-    };
+    this.videoInfo.videoId = this._defaultVideoId;
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 
   /**
    * Event handler for when video settings are changed by the video controller.
-   * @param videoSettings The updated video settings.
+   * @param videoInfo The updated video settings.
    */
-  onVideoSettingsChanged(videoSettings: VideoSettings) {
-    if (!this.videoSettings.hasStarted) {
-      this.loopSettings.isLooping = false;
-      this._setLoopSettings(this.loopSettings);
+  onvideoInfoChanged(videoInfo: VideoInfo) {
+    if (!this.videoInfo.hasStarted) {
+      this.videoInfo.loopSettings.isLooping = false;
     }
 
-    this._setVideoSettings(videoSettings);
-  }
-
-  /**
-   * Event handler for when loop settings are changed by the loop controller.
-   * @param loopSettings The updated loop settings.
-   */
-  onLoopSettingsChanged(loopSettings: LoopSettings) {
-    this._setLoopSettings(loopSettings);
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 
   /**
    * Event handler for getting the current time from the video to set as the start time for the loop
    */
   onCaptureStartTime() {
-    this.loopSettings.startTime = this._video.getCurrentTime();
-    this._setLoopSettings(this.loopSettings);
+    console.log("Capturing start time");
+    this.videoInfo.loopSettings.startTime = this._video.getCurrentTime();
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 
   /**
    * Event handler for getting the current time from the video to set as the end time for the loop
    */
   onCaptureEndTime() {
-    this.loopSettings.endTime = this._video.getCurrentTime();
-    this._setLoopSettings(this.loopSettings);
-  }
-
-  /**
-   * Sets the video settings across the components that share it.
-   * @param videoSettings The new value for the video settings.
-   */
-  private _setVideoSettings(videoSettings: VideoSettings) {
-    this.videoSettings = videoSettings;
-    this._video.videoSettings = this.videoSettings;
-    this._loopControl.videoSettings = this.videoSettings;
-  }
-
-  /**
-   * Sets the loop settings across the components that share it.
-   * @param loopSettings The new value for the loop settings.
-   */
-  private _setLoopSettings(loopSettings: LoopSettings) {
-    this.loopSettings = loopSettings;
-    this._video.loopSettings = this.loopSettings;
-    this._loopControl.loopSettings = this.loopSettings;
+    console.log("Capturing end time");
+    this.videoInfo.loopSettings.endTime = this._video.getCurrentTime();
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 }

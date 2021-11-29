@@ -7,7 +7,7 @@
                     <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="end center">
                         <mat-form-field appearance="fill" style="margin-right: 10px; margin-bottom: -1.25em;">
                             <mat-label>Video Id</mat-label>
-                            <input matInput placeholder="VideoId" [ngModel]="videoSettings.videoId" name="videoId">
+                            <input matInput placeholder="VideoId" [ngModel]="videoInfo.videoId" name="videoId">
                         </mat-form-field>
                     </div>
                     <div fxFlex="0 1 calc(20% - 20px)" fxLayoutAlign="start center">
@@ -69,15 +69,15 @@
         <mat-tab label="Playback Speed" class="mt-fill">
             <div fxLayout="row" fxFlex="0 1 calc(100%)" fxLayoutAlign="center center">
                 <div fxFlex="0 1 calc(70% - 20px)" fxLayoutAlign="center center">
-                    <mat-slider [disabled]="!videoSettings.hasStarted" thumbLabel [displayWith]="formatLabel"
-                        [ngModel]="videoSettings.playbackSpeed" (change)="onChangePlaybackSpeed($event.value)"
+                    <mat-slider [disabled]="!videoInfo.hasStarted" thumbLabel [displayWith]="formatLabel"
+                        [ngModel]="videoInfo.playbackSpeed" (change)="onChangePlaybackSpeed($event.value)"
                         tickInterval="1" step=".05" min=".25" max="2.0" aria-label="units">
                     </mat-slider>
                 </div>
                 <div fxFlex="0 1 calc(30% - 20px)" fxLayoutAlign="center center">
                     <div fxLayout="row" fxFill fxLayoutAlign="space-between center">
                         <label>Current Playback Speed</label>
-                        <label>{{videoSettings.playbackSpeed}}</label>
+                        <label>{{videoInfo.playbackSpeed}}</label>
                     </div>
                 </div>
             </div>

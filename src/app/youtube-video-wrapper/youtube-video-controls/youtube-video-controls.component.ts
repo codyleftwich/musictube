@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Favorite } from 'src/app/shared/favorite';
 import { FavoriteService } from 'src/app/shared/favorite.service';
-import { VideoSettings } from '../youtube-video-wrapper';
+import { VideoInfo } from 'src/app/shared/video-info';
+import { VideoInfoService } from 'src/app/shared/video-info.service';
 import { FavoritesDialogComponent } from './favorites-dialog/favorites-dialog.component';
 
 /**
@@ -42,7 +43,7 @@ export class YoutubeVideoControlsComponent {
    * Constructor
    * @param dialog The {@link MatDialog} module for displaying modal dialogs.
    */
-  constructor(public dialog: MatDialog, public favoriteService: FavoriteService) {
+  constructor(public dialog: MatDialog, public favoriteService: FavoriteService, public videoInfoService: VideoInfoService) {
     favoriteService.currentFavorite$.subscribe((currentFavorite: Favorite) => {
       this.currentFavorite = currentFavorite;
     });
@@ -53,29 +54,17 @@ export class YoutubeVideoControlsComponent {
 
     favoriteService.fileName$.subscribe((fileName: string) => {
       this.fileName = fileName;
-    })
+    });
+
+    videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
+      this.videoInfo = videoInfo;
+    });
   }
 
   /**
-   * Storage for video settings
+   * Storage for video info
    */
-  private _videoSettings: VideoSettings;
-
-  /**
-   * Getter/Setter for video settings input
-   */
-  @Input()
-  get videoSettings(): VideoSettings {
-    return this._videoSettings;
-  }
-  set videoSettings(videoSettings: VideoSettings) {
-    this._videoSettings = videoSettings;
-  }
-
-  /**
-   * EventEmitter used when video settings are changed.
-   */
-  @Output() onVideoSettingsChanged = new EventEmitter<VideoSettings>();
+  videoInfo: VideoInfo;
 
   /**
    * Event handler for when the user clicks the "Change Video" button in the "Favorites" tab.
@@ -90,10 +79,10 @@ export class YoutubeVideoControlsComponent {
    * Event handler for when the user clicks the "Change Video" button.
    */
   onChangeVideo(data: any) {
-    if (data.videoId != this.videoSettings.videoId) {
-      this.videoSettings.videoId = data.videoId;
-      this.videoSettings.playbackSpeed = 1.0; // Reset the playback speed.
-      this.onVideoSettingsChanged.emit(this.videoSettings);
+    if (data.videoId != this.videoInfo.videoId) {
+      this.videoInfo.videoId = data.videoId;
+      this.videoInfo.playbackSpeed = 1.0; // Reset the playback speed.
+      this.videoInfoService.setVideoInfo(this.videoInfo);
     }
   }
 
@@ -102,8 +91,8 @@ export class YoutubeVideoControlsComponent {
    * @param value The value represented by the position of the slider.
    */
   onChangePlaybackSpeed(value: number) {
-    this.videoSettings.playbackSpeed = value;
-    this.onVideoSettingsChanged.emit(this.videoSettings);
+    this.videoInfo.playbackSpeed = value;
+    this.videoInfoService.setVideoInfo(this.videoInfo);
   }
 
   /**
@@ -115,15 +104,17 @@ export class YoutubeVideoControlsComponent {
       data: {
         action: "add",
         favorite: {
-          videoTitle: "title",
-          artist: "artist",
-          videoId: "videoId"
+          videoTitle: this.videoInfo.videoTitle,
+          artist: this.videoInfo.artist,
+          videoId: this.videoInfo.videoId
         }
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this._handleModifyFavorite(result);
+      if (result) {
+        this._handleModifyFavorite(result);
+      }
     });
   }
 
@@ -144,7 +135,9 @@ export class YoutubeVideoControlsComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this._handleModifyFavorite(result);
+      if (result) {
+        this._handleModifyFavorite(result);
+      }
     });
   }
 

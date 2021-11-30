@@ -83,10 +83,7 @@ export class YoutubeLoopControlsComponent {
     videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
       this.videoInfo = videoInfo;
 
-      console.log("YoutubeLoopControlsComponent videoInfo changed");
-
       if (this._startTimeInput && this._endTimeInput) {
-        console.log("setting input values.");
         this._startTimeInput.setInputValuesBySeconds(this.videoInfo.loopSettings.startTime);
         this._endTimeInput.setInputValuesBySeconds(this.videoInfo.loopSettings.endTime);
       }

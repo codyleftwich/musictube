@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { interval, Subscription } from 'rxjs';
 import { VideoInfo } from 'src/app/shared/video-info';
@@ -87,7 +87,7 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
           this.videoInfo.hasStarted = true;
 
           // Exit the loop when the user pauses during it.
-          if (this.videoInfo.loopSettings.isLooping && this._youtubePlayer.getCurrentTime() != this.videoInfo.loopSettings.startTime) {
+          if (this.videoInfo.loopSettings.isLooping && !this._precisionEquals(this._youtubePlayer.getCurrentTime(), this.videoInfo.loopSettings.startTime, 4)) {
             this.videoInfo.loopSettings.isLooping = false;
             this._waitingForLoop = false;
           }
@@ -114,9 +114,13 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
       }
     )
 
-    this._loopPoll = interval(30)
+    this._loopPoll = interval(1)
       .subscribe(() => {
-        if (!this._waitingForLoop && this.videoInfo.loopSettings.isLooping && this.getCurrentTime() >= this.videoInfo.loopSettings.endTime) {
+        if (!this._waitingForLoop && this.videoInfo.loopSettings.isLooping && this.getCurrentTime() > this.videoInfo.loopSettings.endTime) {
+          console.log("loopPoll");
+          console.log("currentTime: " + this._youtubePlayer.getCurrentTime());
+          console.log("startTime: " + this.videoInfo.loopSettings.startTime);
+          console.log("endTime: " + this.videoInfo.loopSettings.endTime);
           this._loopVideo();
         }
       });
@@ -144,13 +148,17 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
    * Plays video after it was paused during looping.
    */
   private _loopVideo(): void {
-    this._youtubePlayer.pauseVideo();
     this._youtubePlayer.seekTo(this.videoInfo.loopSettings.startTime, true);
+    this._youtubePlayer.pauseVideo();
     this._waitingForLoop = true;
+
+    if (this.videoInfo.loopSettings.loopDelay != 0) {
+      this._beepAudio.play();
+    }
 
     setTimeout(() => {
       clearInterval(this._beepInterval);
-      this._beepAudio.play();
+
       this._youtubePlayer.playVideo();
       this._waitingForLoop = false;
     }, this.videoInfo.loopSettings.loopDelay * 1000);
@@ -162,5 +170,17 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
         }
       }, 1000);
     }
+  }
+
+  /**
+   * Determines if two given numbers are equal to a given precision.
+   *
+   * @param num1 {@link number} object
+   * @param num2 {@link number} object
+   * @param precision The number of decimals to compare to.
+   * @returns True if the given numbers are equal to the given precision.
+   */
+  private _precisionEquals(num1: number, num2: number, precision: number): boolean {
+    return num1.toPrecision(precision) == num2.toPrecision(precision);
   }
 }

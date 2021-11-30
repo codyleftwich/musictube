@@ -60,7 +60,6 @@ export class YoutubeVideoWrapperComponent implements OnInit {
    * Event handler for getting the current time from the video to set as the start time for the loop
    */
   onCaptureStartTime() {
-    console.log("Capturing start time");
     this.videoInfo.loopSettings.startTime = this._video.getCurrentTime();
     this.videoInfoService.setVideoInfo(this.videoInfo);
   }
@@ -69,7 +68,6 @@ export class YoutubeVideoWrapperComponent implements OnInit {
    * Event handler for getting the current time from the video to set as the end time for the loop
    */
   onCaptureEndTime() {
-    console.log("Capturing end time");
     this.videoInfo.loopSettings.endTime = this._video.getCurrentTime();
     this.videoInfoService.setVideoInfo(this.videoInfo);
   }

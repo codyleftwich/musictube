@@ -52,9 +52,18 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
    */
   videoInfo: VideoInfo;
 
+  /**
+   * Constructor.
+   * @param videoInfoService The {@link VideoInfoService} containing information on the video playing and the
+   * {@link LoopSettings} on the current video.
+   */
   constructor(public videoInfoService: VideoInfoService) {
     videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
       this.videoInfo = videoInfo;
+
+      if (this._youtubePlayer && this._youtubePlayer.getPlaybackRate() != this.videoInfo.playbackSpeed) {
+        this._youtubePlayer.setPlaybackRate(this.videoInfo.playbackSpeed);
+      }
     });
   }
 
@@ -112,18 +121,13 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
           this.videoInfoService.setVideoInfo(this.videoInfo);
         }
       }
-    )
+    );
 
-    this._loopPoll = interval(1)
-      .subscribe(() => {
-        if (!this._waitingForLoop && this.videoInfo.loopSettings.isLooping && this.getCurrentTime() > this.videoInfo.loopSettings.endTime) {
-          console.log("loopPoll");
-          console.log("currentTime: " + this._youtubePlayer.getCurrentTime());
-          console.log("startTime: " + this.videoInfo.loopSettings.startTime);
-          console.log("endTime: " + this.videoInfo.loopSettings.endTime);
-          this._loopVideo();
-        }
-      });
+    this._loopPoll = interval(1).subscribe(() => {
+      if (!this._waitingForLoop && this.videoInfo.loopSettings.isLooping && this.getCurrentTime() > this.videoInfo.loopSettings.endTime) {
+        this.loopVideo();
+      }
+    });
   }
 
   /**
@@ -145,9 +149,9 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Plays video after it was paused during looping.
+   * Starts a loop with the settings defined in the {@link VideoInfo.loopSettings} singleton.
    */
-  private _loopVideo(): void {
+  loopVideo(): void {
     this._youtubePlayer.seekTo(this.videoInfo.loopSettings.startTime, true);
     this._youtubePlayer.pauseVideo();
     this._waitingForLoop = true;

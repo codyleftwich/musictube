@@ -75,10 +75,20 @@ export class YoutubeLoopControlsComponent {
   @Output() captureStartTimeEvent = new EventEmitter();
 
   /**
-  * EventEmitter used when user requests to capture end time.
-  */
+   * EventEmitter used when user requests to capture end time.
+   */
   @Output() captureEndTimeEvent = new EventEmitter();
 
+  /**
+   * EventEmitter used when a user requests to start a loop.
+   */
+  @Output() startLoopEvent = new EventEmitter();
+
+  /**
+   * Constructor.
+   * @param videoInfoService The {@link VideoInfoService} containing information on the video playing and the
+   * {@link LoopSettings} on the current video.
+   */
   constructor(public videoInfoService: VideoInfoService) {
     videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
       this.videoInfo = videoInfo;
@@ -154,5 +164,9 @@ export class YoutubeLoopControlsComponent {
   toggleLoop() {
     this.videoInfo.loopSettings.isLooping = !this.videoInfo.loopSettings.isLooping;
     this.videoInfoService.setVideoInfo(this.videoInfo);
+
+    if (this.videoInfo.loopSettings.isLooping) {
+      this.startLoopEvent.emit();
+    }
   }
 }

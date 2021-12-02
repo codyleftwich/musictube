@@ -30,6 +30,11 @@ export class YoutubeVideoWrapperComponent implements OnInit {
    */
   videoInfo: VideoInfo;
 
+  /**
+   * Constructor.
+   * @param videoInfoService The {@link VideoInfoService} containing information on the video playing and the
+   * {@link LoopSettings} on the current video.
+   */
   constructor(public videoInfoService: VideoInfoService) {
     videoInfoService.videoInfo$.subscribe((videoInfo: VideoInfo) => {
       this.videoInfo = videoInfo;
@@ -70,5 +75,12 @@ export class YoutubeVideoWrapperComponent implements OnInit {
   onCaptureEndTime() {
     this.videoInfo.loopSettings.endTime = this._video.getCurrentTime();
     this.videoInfoService.setVideoInfo(this.videoInfo);
+  }
+
+  /**
+   * Event handler for when requesting a loop to start.
+   */
+  onStartLoopRequest() {
+    this._video.loopVideo();
   }
 }

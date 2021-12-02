@@ -21,7 +21,8 @@
                 <mat-tab-group class="mt-fill">
                     <mat-tab label="Loop Controls">
                         <app-youtube-loop-controls (captureStartTimeEvent)="onCaptureStartTime()"
-                            (captureEndTimeEvent)="onCaptureEndTime()" #loopController class="mt-fill">
+                            (captureEndTimeEvent)="onCaptureEndTime()" (startLoopEvent)="onStartLoopRequest()"
+                            #loopController class="mt-fill">
                         </app-youtube-loop-controls>
                     </mat-tab>
                     <mat-tab label="Metronome">

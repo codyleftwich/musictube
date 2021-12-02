@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Favorite } from 'src/app/shared/favorite';
 import { FavoriteService } from 'src/app/shared/favorite.service';
@@ -79,8 +79,27 @@ export class YoutubeVideoControlsComponent {
    * Event handler for when the user clicks the "Change Video" button.
    */
   onChangeVideo(data: any) {
-    if (data.videoId != this.videoInfo.videoId) {
-      this.videoInfo.videoId = data.videoId;
+    let videoIdString = (String)(data.videoId);
+
+    if (videoIdString != this.videoInfo.videoId) {
+      if (videoIdString.toLowerCase().includes("youtube.com")) {
+        let url = new URL(videoIdString);
+
+        if (url.searchParams.has('v')) {
+          this.videoInfo.videoId = url.searchParams.get('v');
+        }
+      }
+      else if (videoIdString.toLowerCase().includes("youtu.be")) {
+        let url = new URL(videoIdString);
+
+        if (url.pathname) {
+          this.videoInfo.videoId = url.pathname.slice(1);
+        }
+      }
+      else {
+        this.videoInfo.videoId = videoIdString;
+      }
+
       this.videoInfo.playbackSpeed = 1.0; // Reset the playback speed.
       this.videoInfoService.setVideoInfo(this.videoInfo);
     }

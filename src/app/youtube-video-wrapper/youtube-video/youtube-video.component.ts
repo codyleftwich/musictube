@@ -169,7 +169,7 @@ export class YoutubeVideoComponent implements OnInit, OnDestroy {
 
     if (this.videoInfo.loopSettings.loopDelay != 0) {
       this._beepInterval = setInterval(() => {
-        if (this.videoInfo.loopSettings.isLooping) {
+        if (this._waitingForLoop) {
           this._beepAudio.play();
         }
       }, 1000);

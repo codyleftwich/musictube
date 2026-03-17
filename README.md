@@ -2,6 +2,19 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.2.
 
+This project is severely out of date, but still works with a little work. In order to run, you'll need the following:
+- Node v18.13.0
+    - Can be obtained using the (Node Version Manager)[https://github.com/nvm-sh/nvm]
+- Angular CLI version ~10.1.2
+- An environment variable for `NODE_OPTIONS=--openssl-legacy-provider`
+
+Then, to install the node dependencies, run
+``` shell
+npm install --legacy-peer-deps
+```
+
+You should then be able to run the application.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
